@@ -1,0 +1,7 @@
+{
+	"success": true,
+	"users": [
+		{"id": 1, "name": "N1", "email": "N1@gmail.com"},
+		{"id": 2, "name": "N2", "email": "N2@gmail.com"}
+	]
+}
