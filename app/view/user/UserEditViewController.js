@@ -10,6 +10,7 @@ Ext.define("testFunc.view.user.UserEditViewController", {
 	updateUser: function(button){
 		console.log("Click on Save button with form values: ");
 		var form = button.up('form');
+		//getRecord() returns the currently loaded model instance if loaded via loadRecord
 		var record = form.getRecord();
 		var values = form.getValues();
 		console.log(values);

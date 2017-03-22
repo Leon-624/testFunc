@@ -18,7 +18,7 @@ Ext.define('testFunc.view.user.UserList', {
 		plugins: {
 			//drag drop plugin for grid
 			ptype: 'gridviewdragdrop',
-			ddGroup: 'userList',
+			ddGroup: 'userRecord',
 			dragText: 'Drag and drop record to re-order or fill the form'
 		}
 	},

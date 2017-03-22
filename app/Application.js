@@ -14,13 +14,24 @@ Ext.define('testFunc.Application', {
     /*stores:[
         "Users"
     ],*/
+    requires: [
+        "testFunc.view.user.UserForm",
+        'testFunc.view.user.UserList'
+    ],
     
     launch: function () {
         Ext.create('Ext.container.Viewport', {
-            layout: 'fit',
+            layout: 'hbox',
             items: [
                 {
-                    xtype: 'userlist'
+                    xtype: 'userlist',
+                    flex: 2,
+                    height: 300
+                },
+                {
+                    xtype: 'userform',
+                    flex: 1,
+                    height: 300
                 }
             ]
         });
