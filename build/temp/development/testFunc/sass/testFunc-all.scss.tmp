@@ -909,12 +909,6 @@ $include-ext-window-toast: dynamic(true);;
 $include-ext-window-window: dynamic(true);;
 $include-testfunc-application: dynamic(true);;
 $include-testfunc-model-user: dynamic(true);;
-$include-testfunc-store-personnel: dynamic(true);;
-$include-testfunc-view-main-list: dynamic(true);;
-$include-testfunc-view-main-main: dynamic(true);;
-$include-testfunc-view-main-maincontroller: dynamic(true);;
-$include-testfunc-view-main-mainmodel: dynamic(true);;
-$include-testfunc-view-user-user: dynamic(true);;
 $include-testfunc-view-user-useredit: dynamic(true);;
 $include-testfunc-view-user-usereditviewcontroller: dynamic(true);;
 $include-testfunc-view-user-userform: dynamic(true);;
@@ -1381,11 +1375,3 @@ $relative-image-path-for-uis: $theme-triton-resource-path;
 @import '../../../../../ext/classic/theme-triton/sass/src/menu/Menu';
 @import '../../../../../ext/classic/theme-triton/sass/src/tab/Tab';
 @import '../../../../../ext/classic/theme-triton/sass/src/window/Toast';
-
-/* including package testFunc */
-$testFunc-resource-root: '' !default;
-$testFunc-resource-path: 'images' !default;
-$current-package: false;
-$current-resource-root: $testFunc-resource-root;
-$relative-image-path-for-uis: $testFunc-resource-path;
-@import '../../../../../sass/src/view/main/Main';

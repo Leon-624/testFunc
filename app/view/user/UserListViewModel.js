@@ -9,7 +9,7 @@ Ext.define('testFunc.view.user.UserListViewModel', {
     },
 
     data: {
-        title: 'All Users'
+        title: 'All Users (try double-clicking or dragging the record?)'
     },
 
     stores: {
