@@ -1,0 +1,481 @@
+<div style="margin:0;  height: 98px; z-index: 0; width: 100%;  visibility: visible;"
+			id="schematic-navigation" class="">
+
+				<div id="sitesPalette" class="palette-container">
+					<div class="palette-inner-container">
+						<div data-shape="draw2d.shape.RemoteOffice" data-type="site" class="palette_node_element draw2d_droppable ui-draggable selected-stencil">
+							<div>
+								<!--img src="img/schematic/svg/test/RemoteOffice_B.svg" width="30px"/--><!-- house.svg -->
+								<img src="img/schematic/svg/mkt/remoteOffice.svg" width="45px"/>
+								<br/>
+								<span>Remote Office</span>
+							</div>
+						</div>
+						<div data-shape="draw2d.shape.Hq" data-type="site" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<!--img src="img/schematic/svg/test/CorporateHQ.svg" width="30px"/--><!-- hq.svg -->
+								<img src="img/schematic/svg/mkt/hq.svg" width="45px"/>
+								<br/>
+								<span>HQ</span>
+							</div>
+						</div>
+						<div data-shape="draw2d.shape.BranchOffice" data-type="site" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<!--img src="img/schematic/svg/test/BranchOffice.svg" width="30px"/--><!-- blueSite.svg -->
+								<img src="img/schematic/svg/mkt/branchOffice.svg" width="45px"/>
+								<br/>
+								<span>Branch Office</span>
+							</div>
+						</div>						
+						<div data-shape="draw2d.shape.DataCenter" data-type="site" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<!--img src="img/schematic/svg/test/DataCenter.svg" width="30px"/--><!-- redSite.svg -->
+								<img src="img/schematic/svg/mkt/dataCenter.svg" width="45px"/>
+								<br/>
+								<span>Data Center</span>
+							</div>
+						</div>
+						<div data-shape="draw2d.shape.CallCenter" data-type="site" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<!--img src="img/schematic/svg/test/CallCenter.svg" width="30px"/--><!-- greenSite.svg -->
+								<img src="img/schematic/svg/mkt/callCenter.svg" width="45px"/>
+								<br/>
+								<span>Call Center</span>
+							</div>
+						</div>
+						<div data-shape="draw2d.shape.Bcdr" data-type="site" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<!--img src="img/schematic/svg/test/CustomerSite.svg" width="30px"/--><!-- noc.svg -->
+								<img src="img/schematic/svg/mkt/customerSite.svg" width="45px"/>
+								<br/>
+								<span>Customer Site</span>
+							</div>
+						</div>
+						<div data-shape="draw2d.shape.LogicalLan" data-type="site" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<!--img src="img/schematic/svg/test/CustomerSite.svg" width="30px"/--><!-- noc.svg -->
+								<img src="img/schematic/svg/mkt/logicalLan.svg" width="50px"/>
+								<br/>
+								<span>Logical LAN</span>
+							</div>
+						</div>
+
+						<!-- Removing L3Cloud for Beta release. -EG -->
+						<!--div data-shape="draw2d.shape.Level3Cloud" data-type="cloud" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/cloud.svg" width="40px"/>
+								<br/>
+								<span>Level 3 Network</span>
+							</div>
+						</div-->
+
+					</div>
+				</div>
+
+				<div id="productsPalette" class="palette-container" style="display:none;">
+					<div class="palette-inner-container">
+						<div data-shape="draw2d.shape.NoProduct" data-type="product" data-product-code="" class="palette_node_element draw2d_droppable ui-draggable selected-stencil">
+							<div>			
+								<i class="icon-ban-circle icon-4x" style="color: #999999; padding-left: 2px;"></i>														
+								<br/>
+								<span>None</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.Transport" data-type="product" data-product-code="transport" data-default-port-speed="OC-3" class="palette_node_element palette_node_element_inset">
+                            <!--div>
+                                <i class="icon-lock icon-4x" style="color: #0070c0;"></i>
+                                <br/>
+                                <span>VPN</span>
+                            </div-->
+                            <div>
+                                <!--img src="img/schematic/svg/mkt/vpn.svg" width="40px"/-->
+                                <i class="icon-exchange color-transport icon-4x"></i>
+                                <br/>
+                                <span>Transport</span>
+                            </div>
+                        </div>											
+
+                        <div data-shape="draw2d.shape.Ipvpn" data-type="product" data-product-code="vpn" data-default-port-speed="DS-3" class="palette_node_element draw2d_droppable ui-draggable">
+                            <!--div>
+                                <i class="icon-lock icon-4x" style="color: #0070c0;"></i>
+                                <br/>
+                                <span>VPN</span>
+                            </div-->
+                            <div>
+                                <img src="img/schematic/svg/mkt/vpn.svg" width="40px"/>
+                                <br/>
+                                <span>VPN</span>
+                            </div>
+                        </div>
+
+                        <div data-shape="draw2d.shape.VpnDia" data-type="product" data-product-code="vpndia" data-default-port-speed="DS-3" class="palette_node_element draw2d_droppable ui-draggable">
+                            <!--div>
+                                <i class="icon-cloud icon-4x" style="color: #0070c0;"></i>
+                                <i class="icon-lock icon-3x" style="color: #FFFFFF; top:18px; left:0px;"></i>
+                                <br/>
+                                <span>VPN+DIA</span>
+                            </div-->
+                            <div>
+                                <img src="img/schematic/svg/mkt/vpnDia.svg" width="60px"/>
+                                <br/>
+                                <span>VPN+Internet</span>
+                            </div>
+                        </div>
+
+						<div data-shape="draw2d.shape.VpnDiaVoice" data-type="product" data-product-code="vpndiavoice" data-default-port-speed="DS-3" class="palette_node_element draw2d_droppable ui-draggable">
+							<!--div>
+								<i class="icon-cloud icon-4x" style="color: #0070c0;"></i>
+								<i class="icon-lock icon-3x" style="color: #FFFFFF; top:18px; left:-17px;"></i>
+								<i class="icon-phone icon-3x" style="color: #FFFFFF; top:18px; left:17px;"></i>
+								<br/>
+								<span>VPN+DIA+Voice</span>
+							</div-->
+						
+							<div>
+								<img src="img/schematic/svg/mkt/vpnDiaVoice.svg" width="60px"/>
+								<br/>
+								<span>VPN+Internet+Voice</span>
+							</div>
+						</div>
+
+
+
+
+                        <div data-shape="draw2d.shape.VpnVoice" data-type="product" data-product-code="vpnvoice" data-default-port-speed="DS-3" class="palette_node_element draw2d_droppable ui-draggable">
+                            <!--div>
+                                <i class="icon-lock icon-3x" style="color: #0070c0; top:18px; left:-17px;"></i>
+                                <i class="icon-phone icon-3x" style="color: #009900; top:18px; left:17px;"></i>
+                                <br/>
+                                <span>VPN+Voice</span>
+                            </div-->
+                            <div>
+                                <img src="img/schematic/svg/mkt/vpnVoice.svg" width="60px"/>
+                                <br/>
+                                <span>VPN+Voice</span>
+                            </div>
+                        </div>
+
+                        <div data-shape="draw2d.shape.Evpl" data-type="product" data-product-code="evpl" data-default-port-speed="FastE" class="palette_node_element draw2d_droppable ui-draggable">
+                            <!--div>
+                                <i class="icon-certificate icon-4x" style="color: #0070c0;"></i>
+                                <i class="icon-lock icon-3x" style="color: #FFFFFF; top:15px; left:-1px;"></i>
+                                <br/>
+                                <span>EVPL</span>
+                            </div-->
+                            <div>
+                                <img src="img/schematic/svg/mkt/evpl.svg" width="45px"/>
+                                <br/>
+                                <span>EVPL</span>
+                            </div>
+                        </div>
+                        
+                        <div data-shape="draw2d.shape.Dia" data-type="product" data-product-code="dia" data-default-port-speed="DS-3" class="palette_node_element draw2d_droppable ui-draggable">
+							<!--div>
+								<i class="icon-cloud icon-4x" style="color: #990000;"></i>
+								<br/>
+								<span>DIA</span>
+							</div-->
+							<div>
+								<img src="img/schematic/svg/mkt/dia.svg" width="60px"/>
+								<br/>
+								<span>Internet</span>
+							</div>
+						</div>
+
+                        <div data-shape="draw2d.shape.DiaVoice" data-type="product" data-product-code="diavoice" data-default-port-speed="DS-3" class="palette_node_element draw2d_droppable ui-draggable">
+                            <!--div>
+                                <i class="icon-cloud icon-4x" style="color: #009900;"></i>
+                                <i class="icon-phone icon-3x" style="color: #FFFFFF; top:17px; left:0px;"></i>
+                                <br/>
+                                <span>DIA+Voice</span>
+                            </div-->
+                            <div>
+                                <img src="img/schematic/svg/mkt/diaVoice.svg" width="60px"/>
+                                <br/>
+                                <span>Internet+Voice</span>
+                            </div>
+                        </div>
+
+						<div data-shape="draw2d.shape.Voice" data-type="product" data-product-code="voice" data-default-port-speed="2xDS-1" class="palette_node_element draw2d_droppable ui-draggable">
+							<!--div>
+								<i class="icon-phone icon-4x" style="color: #009900;"></i>
+								<br/>
+								<span>Voice</span>
+							</div-->
+							<div>
+								<img src="img/schematic/svg/mkt/voice.svg" width="40px"/>
+								<br/>
+								<span>Voice</span>
+							</div>
+						</div>
+						
+						<!-- Doesn't make sense to keep this. -EG
+						<div data-shape="draw2d.shape.PrivateLine" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<i class="icon-exchange icon-4x" style="color: #5c9479;"></i>
+								<br/>
+								<span>Private Line</span>
+							</div>
+						</div>
+						-->
+						
+					</div>					
+				</div>
+
+				<div id="annoPalette" class="palette-container" style="display:none;">
+					<div class="palette-inner-container">
+						<div data-shape="draw2d.shape.Text" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/text.svg" width="60px"/>
+								<br/>
+								<span>Text</span>
+							</div>
+						</div>
+
+						<div data-shape="draw2d.shape.Callout" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/callout.svg" width="60px"/>
+								<br/>
+								<span>Callout</span>
+							</div>
+						</div>
+						
+
+						<div data-shape="draw2d.shape.SetLine" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/line.svg" width="60px"/>
+								<br/>
+								<span>Line or Path</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.Rectangle" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/rectanglePalette.svg" width="40px"/>
+								<br/>
+								<span>Rectangle</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.SchematicDetailsSimple" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/titleSimple.svg" width="60px"/>
+								<br/>
+								<span>Title (Simple)</span>
+							</div>
+						</div>
+					
+										
+						<div data-shape="draw2d.shape.SchematicDetails" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/titleFancy.svg" width="60px"/>
+								<br/>
+								<span>Title (Fancy)</span>
+							</div>
+						</div>
+												
+
+						<div data-shape="draw2d.shape.CustomImage" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/image.svg" width="40px"/>
+								<br/>
+								<span>Image</span>
+							</div>
+						</div>
+
+
+						<div data-shape="draw2d.shape.Cloud" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/cloudGray.svg" width="40px"/>
+								<br/>
+								<span>Cloud</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.Level3Logo" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/level3Logo.svg" width="80px"/>
+								<br/>
+								<span>Level 3 Logo</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.Amp" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/amp.svg" width="60px"/>
+								<br/>
+								<span>Amp</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.Apm" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/apm.svg" width="60px"/>
+								<br/>
+								<span>APM</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.Building" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/building.svg" width="40px"/>
+								<br/>
+								<span>Building</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.CircuitSwitch" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/circuitSwitch.svg" width="40px"/>
+								<br/>
+								<span>Circuit Switch</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.Computer" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/computer.svg" width="60px"/>
+								<br/>
+								<span>Computer</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.CommunicationsDish" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/dish.svg" width="40px"/>
+								<br/>
+								<span>Dish</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.WirelessDish" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/dishWireless.svg" width="40px"/>
+								<br/>
+								<span>Dish (Wireless)</span>
+							</div>
+						</div>										
+						
+						<div data-shape="draw2d.shape.Ethernet" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/ethernet.svg" width="40px"/>
+								<br/>
+								<span>Ethernet</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.FirewallImage" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/firewall.svg" width="40px"/>
+								<br/>
+								<span>Firewall</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.Ilec" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/ilec.svg" width="40px"/>
+								<br/>
+								<span>ILEC</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.LanRouter" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/lanRouter.svg" width="40px"/>
+								<br/>
+								<span>LAN Router</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.Nid" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/nid.svg" width="60px"/>
+								<br/>
+								<span>NID</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.Phone" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/phone.svg" width="40px"/>
+								<br/>
+								<span>Phone</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.IpPhone" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/ipPhone.svg" width="40px"/>
+								<br/>
+								<span>Phone (IP)</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.Pop" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/pop.svg" width="40px"/>
+								<br/>
+								<span>POP</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.Rack" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/rack.svg" width="40px"/>
+								<br/>
+								<span>Rack</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.Router" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/router.svg" width="40px"/>
+								<br/>
+								<span>Router</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.SbcImage" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/sbc.svg" width="40px"/>
+								<br/>
+								<span>SBC</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.Switch" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/switch.svg" width="40px"/>
+								<br/>
+								<span>Switch</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.Secure" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/secure.svg" width="40px"/>
+								<br/>
+								<span>Secure</span>
+							</div>
+						</div>
+						
+						<div data-shape="draw2d.shape.Unsecure" data-type="annotation" class="palette_node_element draw2d_droppable ui-draggable">
+							<div>
+								<img src="img/schematic/svg/mkt/unsecure.svg" width="40px"/>
+								<br/>
+								<span>Unsecure</span>
+							</div>
+						</div>
+						
+						<!-- Hidden preload containers -->
+						<div style="display:none">
+							<img src="img/schematic/svg/mkt/cloudBlue.svg"/>
+							<img src="img/schematic/svg/mkt/cloudRed.svg"/>
+							<img src="img/schematic/svg/mkt/cloudGreen.svg"/>
+						</div>
+					</div>
+				</div>
+			</div>
+</div>
