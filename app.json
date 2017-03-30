@@ -227,7 +227,7 @@
      */
     "js": [
         {
-            "path": "${framework.dir}/build/ext-all.js"
+            "path": "${framework.dir}/build/ext-all-rtl.js"
         },
         {
             "path": "app.js",

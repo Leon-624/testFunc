@@ -908,6 +908,8 @@ $include-ext-window-toast: dynamic(true);;
 $include-ext-window-window: dynamic(true);;
 $include-testfunc-application: dynamic(true);;
 $include-testfunc-model-user: dynamic(true);;
+$include-testfunc-view-dd-cartable: dynamic(true);;
+$include-testfunc-view-dd-cartableviewcontroller: dynamic(true);;
 $include-testfunc-view-user-useredit: dynamic(true);;
 $include-testfunc-view-user-usereditviewcontroller: dynamic(true);;
 $include-testfunc-view-user-userform: dynamic(true);;

@@ -16,22 +16,35 @@ Ext.define('testFunc.Application', {
     ],*/
     requires: [
         "testFunc.view.user.UserForm",
-        'testFunc.view.user.UserList'
+        'testFunc.view.user.UserList',
+        'testFunc.view.dd.CarTable',
+        'testFunc.model.User'
     ],
     
     launch: function () {
         Ext.create('Ext.container.Viewport', {
-            layout: 'hbox',
+            //layout: 'vbox',
+            autoScroll: true,
             items: [
                 {
-                    xtype: 'userlist',
-                    flex: 2,
-                    height: 300
+                    xtype: 'panel',
+                    layout: 'hbox',
+                    items: [
+                        {
+                            xtype: 'userlist',
+                            flex: 2,
+                            height: 300
+                        },
+                        {
+                            xtype: 'userform',
+                            flex: 1,
+                            height: 300
+                        }
+                    ]
                 },
                 {
-                    xtype: 'userform',
-                    flex: 1,
-                    height: 300
+                    xtype: 'cartable'
+                    //height: 300
                 }
             ]
         });
