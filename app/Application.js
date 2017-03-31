@@ -27,6 +27,12 @@ Ext.define('testFunc.Application', {
             autoScroll: true,
             items: [
                 {
+                    xtype: 'design'
+                },
+                {
+                    xtype: 'pie3d'
+                },
+                {
                     xtype: 'panel',
                     layout: 'hbox',
                     items: [

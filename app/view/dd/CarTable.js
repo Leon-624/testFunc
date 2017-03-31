@@ -19,7 +19,7 @@ Ext.define('testFunc.view.dd.CarTable', {
 
     //ui: 'navigation',
     layout: 'hbox',
-    title: 'test DD',
+    title: 'test DD (not working)',
 
     initComponent: function(){
         me = this;
@@ -65,7 +65,7 @@ Ext.define('testFunc.view.dd.CarTable', {
                 //width: 100,
                 flex: 1,
                 border: true,
-                html: '<img src="img/car2.ico" height="90" width="90" z-index="9999" style= "border:1px solid black;">'
+                html: '<img src="img/cartable/car2.ico" height="90" width="90" z-index="9999" style= "border:1px solid black;">'
 
 
                 // items:[
