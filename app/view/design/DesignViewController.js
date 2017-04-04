@@ -5,11 +5,17 @@ Ext.define('testFunc.view.design.DesignViewController', {
 
     onAfterRender: function(){
     	console.log("Design ViewController onAfterRender Fired");
-    	this.initCanvas();
+    	//this.initCanvas();
+    },
+
+    onPalettesLoad: function(){
+        console.log("onPalettesLoad Fired");
+        this.initCanvas();
     },
 
     initCanvas: function(){
-    	this.canvas = new draw2d.Canvas("gfx_holder");
+    	this.canvas = new draw2d.CustomCanvas("gfx_holder");
+
     	this.canvas.installEditPolicy(new draw2d.policy.canvas.CoronaDecorationPolicy());
     	this.canvas.installEditPolicy(new draw2d.policy.connection.ComposedConnectionCreatePolicy([
     		new draw2d.policy.connection.DragConnectionCreatePolicy({
@@ -60,7 +66,6 @@ Ext.define('testFunc.view.design.DesignViewController', {
 		d2.createPort("output",outputLocator);
 
 		this.canvas.add(d2);
-
     }
 
 });

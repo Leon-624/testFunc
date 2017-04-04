@@ -9,19 +9,24 @@ Ext.define('testFunc.view.design.Design', {
     title: 'Design (try connecting ports of entities by drag-drop or click-click?)',
 
     initComponent: function(){
+        me = this;
     	this.items = [
     		{
     			xtype: 'component',
     			//height: 200,
     			loader:{
     				url : 'html/schematicPalettes.html',
-                    autoLoad : true
+                    autoLoad : true,
+                    listeners:{
+                        scope: me.controller,
+                        load: 'onPalettesLoad'
+                    }
     			}
     		},
     		{
     			xtype: 'component',
     			autoScroll: true,
-    			html: '<div id="gfx_holder" style="width:800px; height:400px; background-color:#eff5ff;"></div>'
+    			html: '<div id="gfx_holder" class="ui-droppable" style="width:800px; height:400px; background-color:#eff5ff;"></div>'
     		}
     	];
 

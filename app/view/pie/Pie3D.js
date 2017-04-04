@@ -8,7 +8,7 @@ Ext.define('testFunc.view.pie.Pie3D', {
     ],
 
     layout: 'vbox',
-    width: 800,
+    width: '100%',
     title: 'Chances that I am a good guy?',
 
     items: [{

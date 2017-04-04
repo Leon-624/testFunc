@@ -12,16 +12,16 @@ Ext.define('testFunc.view.dd.CarTableViewController', {
 
 
     beforeLoad: function(){
-        console.log("before load");
+        //console.log("before load");
     },
 
     afterLoad: function(){
         //var me = this.getView();
-        console.log("after load");
+        //console.log("after load");
     },
 
     test: function() {
-        console.log("test!!!!!!!!!!!");
+        //console.log("test!!!!!!!!!!!");
     },
 
 
