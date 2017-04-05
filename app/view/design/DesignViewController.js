@@ -16,7 +16,8 @@ Ext.define('testFunc.view.design.DesignViewController', {
     initCanvas: function(){
     	this.canvas = new draw2d.CustomCanvas("gfx_holder");
 
-    	this.canvas.installEditPolicy(new draw2d.policy.canvas.CoronaDecorationPolicy());
+    	this.canvas.installEditPolicy(new draw2d.policy.canvas.CustomFadeoutDecorationPolicy());
+
     	this.canvas.installEditPolicy(new draw2d.policy.connection.ComposedConnectionCreatePolicy([
     		new draw2d.policy.connection.DragConnectionCreatePolicy({
     			createConnection: function(){
