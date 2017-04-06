@@ -51,6 +51,61 @@ draw2d.policy.canvas.CustomFadeoutDecorationPolicy = draw2d.policy.canvas.Fadeou
 
 
 
+draw2d.policy.connection.CustomConnectionCreatePolicy = draw2d.policy.connection.ComposedConnectionCreatePolicy.extend({
+
+	NAME: "draw2d.policy.connection.CustomConnectionCreatePolicy",
+
+	init: function(){
+		this._super([
+			new draw2d.policy.connection.DragConnectionCreatePolicy({
+    			createConnection: function(){
+    				var connection = new draw2d.Connection({
+    					stroke: 3,
+    					outlineStroke: 1,
+    					outlineColor: '#303030',
+    					color: '91B93E',
+    					router: new draw2d.layout.connection.SplineConnectionRouter()
+    				});
+    				return connection;
+    			}
+    		}),
+    		new draw2d.policy.connection.ClickConnectionCreatePolicy({
+    			/*createConnection: function(){
+    				var connection = new draw2d.Connection({
+    					stroke: 3,
+    					outlineStroke: 1,
+    					outlineColor: '#303030',
+    					color: '91B93E',
+    					router: new draw2d.layout.connection.SplineConnectionRouter()
+    				});
+    				return connection;
+    			}*/
+    		})
+		]);
+	}
+});
+
+
+
+draw2d.policy.canvas.CustomSingleSelectionPolicy = draw2d.policy.canvas.SingleSelectionPolicy.extend({
+
+	NAME: "draw2d.policy.canvas.CustomSingleSelectionPolicy",
+
+	init: function(){
+		this._super();
+	},
+
+	//override onClick to bring the clicked figure to the front
+	onClick: function(figureClicked, mouseX, mouseY, shiftKey, ctrlKey){
+		if(figureClicked != null)
+			figureClicked.toFront();
+	}
+
+});
+
+
+
+
 draw2d.shape.basic.SiteImg = draw2d.shape.basic.Image.extend({
 
 	NAME : "draw2d.shape.basic.SiteImg",
@@ -73,7 +128,7 @@ draw2d.shape.basic.SiteImg = draw2d.shape.basic.Image.extend({
 				this._super();
 			},
 			relocate: function(index, figure){
-				//figure here is actually port. parent is the actual figure.
+				//figure here is port. parent is the actual image.
 				var parent = figure.getParent();
 				//console.log(figure);
 				//console.log(parent);

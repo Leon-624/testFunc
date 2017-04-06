@@ -26,7 +26,8 @@ Ext.define('testFunc.view.design.Design', {
     		{
     			xtype: 'component',
     			autoScroll: true,
-    			html: '<div id="gfx_holder" class="ui-droppable" style="width:800px; height:400px; background-color:#eff5ff;"></div>'
+    			html: '<div id="gfx_holder" class="ui-droppable" style="width:1000px; height:600px; background-color:#eff5ff;"></div>'
+                    + '<div id="zoomSlider" style="height:150px; position:absolute; top:30px; left:30px; z-index:26000"></div>'
     		}
     	];
 

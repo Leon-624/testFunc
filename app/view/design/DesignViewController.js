@@ -5,45 +5,21 @@ Ext.define('testFunc.view.design.DesignViewController', {
 
     onAfterRender: function(){
     	console.log("Design ViewController onAfterRender Fired");
-    	//this.initCanvas();
     },
 
     onPalettesLoad: function(){
         console.log("onPalettesLoad Fired");
         this.initCanvas();
+        this.initSlider();
     },
 
     initCanvas: function(){
     	this.canvas = new draw2d.CustomCanvas("gfx_holder");
 
+        this.canvas.installEditPolicy(new draw2d.policy.canvas.ExtendedKeyboardPolicy());
     	this.canvas.installEditPolicy(new draw2d.policy.canvas.CustomFadeoutDecorationPolicy());
-
-    	this.canvas.installEditPolicy(new draw2d.policy.connection.ComposedConnectionCreatePolicy([
-    		new draw2d.policy.connection.DragConnectionCreatePolicy({
-    			createConnection: function(){
-    				var connection = new draw2d.Connection({
-    					stroke: 3,
-    					outlineStroke: 1,
-    					outlineColor: '#303030',
-    					color: '91B93E',
-    					router: new draw2d.layout.connection.SplineConnectionRouter()
-    				});
-    				return connection;
-    			}
-    		}),
-    		new draw2d.policy.connection.ClickConnectionCreatePolicy({
-    			/*createConnection: function(){
-    				var connection = new draw2d.Connection({
-    					stroke: 3,
-    					outlineStroke: 1,
-    					outlineColor: '#303030',
-    					color: '91B93E',
-    					router: new draw2d.layout.connection.SplineConnectionRouter()
-    				});
-    				return connection;
-    			}*/
-    		})
-    	]));
+        this.canvas.installEditPolicy(new draw2d.policy.canvas.CustomSingleSelectionPolicy);
+        this.canvas.installEditPolicy(new draw2d.policy.connection.CustomConnectionCreatePolicy());
 
 		var d = new draw2d.shape.basic.Rectangle({width:50, height:100, x:100, y:100});
 		var inputLocator  = new draw2d.layout.locator.InputPortLocator();
@@ -67,6 +43,20 @@ Ext.define('testFunc.view.design.DesignViewController', {
 		d2.createPort("output",outputLocator);
 
 		this.canvas.add(d2);
+    },
+
+    initSlider: function(){
+        var me = this;
+        $('#zoomSlider').slider({
+            orientation: 'vertical',
+            min: 0.2,
+            max: 2,
+            value: 1,
+            step: 0.2,
+            slide: function(event, ui){
+                me.canvas.setZoom(ui.value);
+            }
+        });
     }
 
 });
