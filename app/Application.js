@@ -47,11 +47,11 @@ Ext.define('testFunc.Application', {
                             height: 300
                         }
                     ]
-                },
-                {
+                }
+                /*{
                     xtype: 'cartable'
                     //height: 300
-                }
+                }*/
             ]
         });
     },

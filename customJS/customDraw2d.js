@@ -10,7 +10,8 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
 	onDrop: function(droppedDomNode, x, y){
 		var shape = $(droppedDomNode).data('shape');
 		var imgObj = new draw2d.shape.basic.SiteImg(shape);
-		var cmd = new draw2d.command.CommandAdd(this, imgObj, x, y);
+		//let (x, y) be the center of the image
+		var cmd = new draw2d.command.CommandAdd(this, imgObj, x-imgObj.getWidth()/2, y-imgObj.getHeight()/2);
 		this.getCommandStack().execute(cmd);
 	}
 
