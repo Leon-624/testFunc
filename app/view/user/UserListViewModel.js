@@ -26,18 +26,18 @@ Ext.define('testFunc.view.user.UserListViewModel', {
 			proxy:{
 				type: 'ajax',
 				api: {
-					read: 'data/users.json',
-					update: 'data/updateUsers.json'
+					read: 'http://localhost:8080/testFuncService/rest/users',
+					update: 'http://localhost:8080/testFuncService/rest/users'
 				},
 				reader: {
 					type: 'json',
-					rootProperty: 'users',
-					successProperty: 'success'
+					rootProperty: 'users'
+					//successProperty: 'success'
 				},
 				writer: {
-					type: 'json',
-					rootProperty: 'users',
-					encode: true
+					type: 'json'
+					//rootProperty: 'users',
+					//encode: true
 				}
 			},
 
