@@ -45,8 +45,8 @@ Ext.define('testFunc.view.user.UserList', {
 		this.store = this.getViewModel().getStore("users");
 
 		this.columns = [
-			{header: 'Name', dataIndex: 'name', flex: 1},
-			{header: 'Email', dataIndex: 'email', flex: 1}
+			{header: 'Name', dataIndex: 'userName', flex: 1},
+			{header: 'Email', dataIndex: 'userEmail', flex: 1}
 		];
 
 		this.callParent(arguments);

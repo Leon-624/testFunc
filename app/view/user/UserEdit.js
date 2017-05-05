@@ -17,13 +17,13 @@ Ext.define('testFunc.view.user.UserEdit', {
 				items: [
 					{
 						xtype: 'textfield',
-						name: 'name',
-						fieldLabel: 'Name'
+						name: 'userName',
+						fieldLabel: 'name'
 					},
 					{
 						xtype: 'textfield',
-						name: 'email',
-						fieldLabel: 'Email'
+						name: 'userEmail',
+						fieldLabel: 'email'
 					}
 				],
 				buttons:[

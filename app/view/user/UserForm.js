@@ -17,12 +17,12 @@ Ext.define('testFunc.view.user.UserForm', {
 			{
 				xtype: 'textfield',
 				fieldLabel: 'Name',
-				name: 'name'
+				name: 'userName'
 			},
 			{
 				xtype: 'textfield',
 				fieldLabel: 'Email',
-				name: 'email'
+				name: 'userEmail'
 			}
 		];
 

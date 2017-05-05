@@ -13,6 +13,7 @@ Ext.define("testFunc.view.user.UserListViewController", {
 		//Loads an Ext.data.Model into this form.
 		//The fields in the model are mapped to fields in the form by matching either the Ext.form.field.Base#name or Ext.Component#itemId.
 		view.down("form").loadRecord(record);
+		console.log(record);
 	}
 
 });
