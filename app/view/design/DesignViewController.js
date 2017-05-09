@@ -54,7 +54,7 @@ Ext.define('testFunc.view.design.DesignViewController', {
             value: 1,
             step: 0.2,
             slide: function(event, ui){
-                me.canvas.setZoom(ui.value);
+                me.canvas.setZoom(ui.value, true);
             }
         });
     }

@@ -2,6 +2,7 @@ Ext.define('testFunc.view.user.UserList', {
 	extend: 'Ext.grid.Panel',
 
 	alias: 'widget.userlist',
+	id: 'userlistId',
 
 	controller: 'userlist',
 	viewModel: 'userlist',

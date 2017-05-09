@@ -12,7 +12,7 @@ Ext.define('testFunc.view.user.UserForm', {
 	region: 'center',
 	border: true,
 
-	//url: 'http://localhost:8080/testFuncService/rest/users/create',
+	url: 'http://localhost:8080/testFuncService/rest/users/createFromForm',
 
 	initComponent: function(){
 		this.items = [

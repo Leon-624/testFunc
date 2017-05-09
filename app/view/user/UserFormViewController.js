@@ -29,6 +29,7 @@ Ext.define("testFunc.view.user.UserFormViewController", {
 		var form = this.getView().getForm(),
 			values = form.getValues();
 		if (form.isValid()) {
+			/*
 			//add record to store and sync
 			var storeUsers = Ext.getStore('storeUsers');
 			var newRecord = Ext.create('testFunc.model.User',{  
@@ -36,20 +37,27 @@ Ext.define("testFunc.view.user.UserFormViewController", {
 				userName: values.userName,
 				userEmail: values.userEmail
 			});
+			//has to set phantom equals true
+			//so store knows this record is not in server side and make post call
 			newRecord.phantom = true;
 			storeUsers.add(newRecord);
 			storeUsers.sync();
+			Ext.Msg.alert('Success', "User Record Added");
 			form.reset();
+			*/
 			//post form data
-			/*form.submit({
+			form.submit({
 				success: function(form, action) {
 					//add to store
 					Ext.Msg.alert('Success', action.result.msg);
+					form.reset();
+					Ext.getCmp('userlistId').store.load();
 				},
 				failure: function(form, action) {
 					Ext.Msg.alert('Failed', action.result.msg);
+					Ext.getCmp('userlistId').store.load();
 				}
-			});*/
+			});
 		}
 	}
 
