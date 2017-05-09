@@ -3,7 +3,7 @@ Ext.define('testFunc.view.user.UserForm', {
 
 	alias: 'widget.userform',
 
-	title: "User Record Form",
+	title: "Create User",
 
 	controller: 'userform',
 
@@ -12,19 +12,40 @@ Ext.define('testFunc.view.user.UserForm', {
 	region: 'center',
 	border: true,
 
+	//url: 'http://localhost:8080/testFuncService/rest/users/create',
+
 	initComponent: function(){
 		this.items = [
 			{
 				xtype: 'textfield',
 				fieldLabel: 'Name',
-				name: 'userName'
+				name: 'userName',
+				allowBlank: false,
+				maxLength: 50
 			},
 			{
 				xtype: 'textfield',
 				fieldLabel: 'Email',
-				name: 'userEmail'
+				name: 'userEmail',
+				vtype: 'email',
+				maxLength: 50
 			}
 		];
+
+		this.buttons = [
+			{
+        		text: 'Reset',
+        		handler: function() {
+            		this.up('form').getForm().reset();
+        		}
+    		},
+    		{
+        		text: 'Submit',
+        		formBind: true, //only enabled once the form is valid
+        		disabled: true,
+        		handler: 'createUser'
+    		}
+    	];
 
 		this.callParent(arguments);
 	},

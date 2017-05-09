@@ -23,11 +23,21 @@ Ext.define('testFunc.view.user.UserListViewModel', {
     		storeId: 'storeUsers',
 			autoLoad: true,
 
+			sorters: [{
+         		property: 'userName',
+         		direction: 'ASC'
+     		},
+     		{
+        		 property: 'userEmail',
+         		direction: 'ASC'
+     		}],
+
 			proxy:{
 				type: 'ajax',
 				api: {
 					read: 'http://localhost:8080/testFuncService/rest/users',
-					update: 'http://localhost:8080/testFuncService/rest/users'
+					update: 'http://localhost:8080/testFuncService/rest/users/update',
+					create: 'http://localhost:8080/testFuncService/rest/users/create'
 				},
 				reader: {
 					type: 'json',
@@ -35,7 +45,8 @@ Ext.define('testFunc.view.user.UserListViewModel', {
 					//successProperty: 'success'
 				},
 				writer: {
-					type: 'json'
+					type: 'json',
+					writeAllFields: true
 					//rootProperty: 'users',
 					//encode: true
 				}

@@ -23,6 +23,34 @@ Ext.define("testFunc.view.user.UserFormViewController", {
 				//dragSource.view.store.remove(selectedRecord);
 			}
 		});
+	},
+
+	createUser: function() {
+		var form = this.getView().getForm(),
+			values = form.getValues();
+		if (form.isValid()) {
+			//add record to store and sync
+			var storeUsers = Ext.getStore('storeUsers');
+			var newRecord = Ext.create('testFunc.model.User',{  
+    			userId: 0,
+				userName: values.userName,
+				userEmail: values.userEmail
+			});
+			newRecord.phantom = true;
+			storeUsers.add(newRecord);
+			storeUsers.sync();
+			form.reset();
+			//post form data
+			/*form.submit({
+				success: function(form, action) {
+					//add to store
+					Ext.Msg.alert('Success', action.result.msg);
+				},
+				failure: function(form, action) {
+					Ext.Msg.alert('Failed', action.result.msg);
+				}
+			});*/
+		}
 	}
 
 });
