@@ -10,6 +10,36 @@ Ext.define('testFunc.view.design.Design', {
 
     initComponent: function(){
         me = this;
+        this.dockedItems = [
+            {
+                xtype: 'toolbar',
+                dock: 'top',
+                style: {
+                    backgroundColor: '#f2f2f2'
+                },
+                items: [
+                    {
+                        xtype: 'component',
+                        html: 'Design Title'
+                    },
+                    {
+                        xtype: 'tbfill'
+                    },
+                    {
+                        xtype: 'splitbutton',
+                        text: 'Save',
+                        handler: 'onSaveClick',
+                        menu: new Ext.menu.Menu({
+                            items: [
+                                // these will render as dropdown menu items when the arrow is clicked:
+                                {text: 'Menu Item 1', handler: function(){ Ext.Msg.alert('alert', "Item 1 was clicked"); }},
+                                {text: 'Menu Item 2', handler: function(){ Ext.Msg.alert('alert', "Item 2 was clicked"); }}
+                            ]
+                        })
+                    }
+                ]
+            }
+        ];
     	this.items = [
     		{
     			xtype: 'component',
