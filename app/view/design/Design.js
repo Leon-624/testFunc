@@ -44,6 +44,7 @@ Ext.define('testFunc.view.design.Design', {
     		{
     			xtype: 'component',
     			//height: 200,
+                width: 60,
     			loader:{
     				url : 'html/schematicPalettes.html',
                     autoLoad : true,

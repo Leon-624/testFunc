@@ -4,15 +4,52 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
 
 	init: function(id){
 		this._super(id);
+		this.layerRecs = [];	//array of LayerRectangles
 	},
 
 	//override onDrop for dropping elements from outside div
 	onDrop: function(droppedDomNode, x, y){
 		var shape = $(droppedDomNode).data('shape');
-		var imgObj = new draw2d.shape.basic.SiteImg(shape);
-		//let (x, y) be the center of the image
-		var cmd = new draw2d.command.CommandAdd(this, imgObj, x-imgObj.getWidth()/2, y-imgObj.getHeight()/2);
-		this.getCommandStack().execute(cmd);
+		if(shape === 'rectangle')
+		{
+			//if (x, y) is inside another LayerRectangle, no action
+			var ifInLayer = false, layerLen = this.layerRecs.length;
+			for(var i = 0; i < layerLen; ++i)
+			{
+				if(this.layerRecs[i].hitTest(x, y))
+				{
+					ifInLayer = true;
+					break;
+				}
+			}
+			//(x, y) is inside another layer
+			if(ifInLayer)
+			{
+				console.log('Cannot add layer on top of another layer');
+			}
+			//(x, y) is not inside another layer
+			else
+			{
+				//let (x, y) be the center of the image
+				var imgObj = new draw2d.shape.basic.LayerRectangle();
+				var cmd = new draw2d.command.CommandAdd(this, imgObj, x-imgObj.getWidth()/2, y-imgObj.getHeight()/2);
+				this.getCommandStack().execute(cmd);
+				//add this layer to layerRecs array
+				this.layerRecs.push(imgObj);
+			}
+		}
+			
+		else if(shape === 'circle')
+		{
+			var imgObj = new draw2d.shape.basic.NodeCircle();
+			//let (x, y) be the center of the image
+			var cmd = new draw2d.command.CommandAdd(this, imgObj, x-imgObj.getWidth()/2, y-imgObj.getHeight()/2);
+			this.getCommandStack().execute(cmd);
+		}
+		else
+		{
+			console.log("Shape is not correct.");
+		}
 	}
 
 });
@@ -98,8 +135,54 @@ draw2d.policy.canvas.CustomSingleSelectionPolicy = draw2d.policy.canvas.SingleSe
 
 	//override onClick to bring the clicked figure to the front
 	onClick: function(figureClicked, mouseX, mouseY, shiftKey, ctrlKey){
-		if(figureClicked != null)
-			figureClicked.toFront();
+		if(figureClicked != null && figureClicked.name == 'LayerRectangle')
+		{
+			figureClicked.toBack();
+		}
+			
+	}
+});
+
+
+
+draw2d.shape.basic.LayerRectangle = draw2d.shape.basic.Rectangle.extend({
+
+	NAME: "draw2d.shape.basic.LayerRectangle",
+
+	init: function(){
+		var me = this;
+		this._super({
+			width: 60,
+			height: 200,
+			bgColor: '#FFFFC7',
+			radius: 10,
+			glow: true
+		});
+		this.name = 'LayerRectangle';
+		this.childNodes = [];	//array of NodeCircles inside this layer
+	},
+
+	onDragEnd: function(){
+		this._super();
+		this.toBack();
+	}
+
+});
+
+
+draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
+
+	NAME: "draw2d.shape.basic.NodeCircle",
+
+	init: function(){
+		this._super({
+			stroke: 1,
+			color: '#000000',
+			bgColor: '#00A4D1',
+			glow: true
+		});
+		this.name = 'NodeCircle'; 
+		this.parentLayer = null;	//parent LayerRectangle
 	}
 
 });
@@ -107,7 +190,7 @@ draw2d.policy.canvas.CustomSingleSelectionPolicy = draw2d.policy.canvas.SingleSe
 
 
 
-draw2d.shape.basic.SiteImg = draw2d.shape.basic.Image.extend({
+/*draw2d.shape.basic.SiteImg = draw2d.shape.basic.Image.extend({
 
 	NAME : "draw2d.shape.basic.SiteImg",
 
@@ -182,4 +265,4 @@ draw2d.shape.basic.SiteImg = draw2d.shape.basic.Image.extend({
 		this.createPort('hybrid', new buttomPortLocator());
 	}
 
-});
+});*/

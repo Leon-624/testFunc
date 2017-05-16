@@ -26,7 +26,7 @@ Ext.define('testFunc.Application', {
             //layout: 'vbox',
             autoScroll: true,
             items: [
-                {
+                /*{
                     xtype: 'panel',
                     layout: 'hbox',
                     items: [
@@ -41,7 +41,7 @@ Ext.define('testFunc.Application', {
                             height: 300
                         }
                     ]
-                },
+                },*/
                 {
                     xtype: 'design'
                 },

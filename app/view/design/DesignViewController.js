@@ -39,6 +39,7 @@ Ext.define('testFunc.view.design.DesignViewController', {
                     }
                 },
                 success: function(response, opts) {
+                    //Ext.decode() takes Json and parses
                     var obj = Ext.decode(response.responseText);
                     Ext.Msg.alert('Success', obj.msg);
                 },
@@ -55,31 +56,8 @@ Ext.define('testFunc.view.design.DesignViewController', {
 
         this.canvas.installEditPolicy(new draw2d.policy.canvas.ExtendedKeyboardPolicy());
     	this.canvas.installEditPolicy(new draw2d.policy.canvas.CustomFadeoutDecorationPolicy());
-        this.canvas.installEditPolicy(new draw2d.policy.canvas.CustomSingleSelectionPolicy);
+        //this.canvas.installEditPolicy(new draw2d.policy.canvas.CustomSingleSelectionPolicy);
         this.canvas.installEditPolicy(new draw2d.policy.connection.CustomConnectionCreatePolicy());
-
-		var d = new draw2d.shape.basic.Rectangle({width:50, height:100, x:100, y:100});
-		var inputLocator  = new draw2d.layout.locator.InputPortLocator();
-		var outputLocator = new draw2d.layout.locator.OutputPortLocator();
-
-		d.createPort("input",inputLocator);
-		d.createPort("input",inputLocator);
-		d.createPort("output",outputLocator);
-		d.createPort("output",outputLocator);
-
-		this.canvas.add(d);
-		this.canvas.add(new draw2d.shape.basic.Label({text:"Add ports to the shape with a given locator", x:230, y:60}));
-
-		var d2 = new draw2d.shape.basic.Rectangle({width:50, height:100, x:300, y:150});
-		var inputLocator  = new draw2d.layout.locator.InputPortLocator();
-		var outputLocator = new draw2d.layout.locator.OutputPortLocator();
-
-		d2.createPort("input",inputLocator);
-		d2.createPort("input",inputLocator);
-		d2.createPort("output",outputLocator);
-		d2.createPort("output",outputLocator);
-
-		this.canvas.add(d2);
     },
 
     initSlider: function(){
