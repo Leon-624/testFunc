@@ -11,7 +11,7 @@ var myDraw2d =
 /**
  * @class draw2d.CustomCanvas
  * @author  Liyan Xu
- * @extends draw2d.policy.EditPolicy
+ * @extends draw2d.Canvas
  */
 draw2d.CustomCanvas = draw2d.Canvas.extend({
 
@@ -218,8 +218,8 @@ draw2d.shape.basic.LayerRectangle = draw2d.shape.basic.Rectangle.extend({
      * override onDragEnd to bring the layer to the back
      */
 	onDragEnd: function(){
-		this._super();
 		this.toBack();
+		this._super();
 	},
 
 	/**
@@ -247,7 +247,7 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
      */
 	init: function(util){
 		this._super({
-			radius: util.DEFAULT_RADIUS_CIRCLE,
+			diameter: util.DEFAULT_RADIUS_CIRCLE * 2,
 			stroke: 1,
 			color: '#000000',
 			bgColor: '#00A4D1',
@@ -258,11 +258,20 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
 	},
 
 	/**
+     * @override
+     * override onDragStart to bring the node to the front;
+     */
+	onDragStart: function(){
+		this.toFront();
+		this._super();
+	},
+
+	/**
      * @method
      * @returns {draw2d.geo.Point} the center point of NodeCircle
      */
 	getCenterPos: function(){
-		return new draw2d.geo.Point(this.x + this.radius, this.y + this.radius);
+		return new draw2d.geo.Point(this.x + this.width, this.y + this.width);
 	}
 
 });
@@ -325,9 +334,9 @@ myDraw2d.Util = Class.extend({
 			{
 				var currNode = nodeCirs[i];
 				var currNodeDesc = new myDraw2d.shapeDesc.NodeCircle(
-					currNode.getX() + currNode.getRadius(),
-					currNode.getY() + currNode.getRadius(),
-					currNode.getRadius());
+					currNode.getX() + currNode.getDiameter()/2,
+					currNode.getY() + currNode.getDiameter()/2,
+					currNode.getDiameter()/2);
 				if(this.ifLayerOverlapNode(layer, currNodeDesc))
 				{
 					ifOverlapNode = true;
@@ -385,9 +394,9 @@ myDraw2d.Util = Class.extend({
 			{
 				var currNode = nodeCirs[i];
 				var currNodeDesc = new myDraw2d.shapeDesc.NodeCircle(
-					currNode.getX() + currNode.getRadius(),
-					currNode.getY() + currNode.getRadius(),
-					currNode.getRadius());
+					currNode.getX() + currNode.getDiameter()/2,
+					currNode.getY() + currNode.getDiameter()/2,
+					currNode.getDiameter()/2);
 				if(this.ifLayerOverlapNode(layer, currNodeDesc))
 				{
 					ifOverlapNode = true;
@@ -415,8 +424,8 @@ myDraw2d.Util = Class.extend({
      * @returns {boolean} true if two LayerRectangles overlap
      */
 	ifLayersOverlap: function(l1, l2){
-		if((Math.abs(l2.centerX - l1.centerX) > (l1.width/2 + l2.width/2)) ||
-			(Math.abs(l2.centerY - l1.centerY) > (l1.height/2 + l2.height/2)))
+		if((Math.abs(l2.centerX - l1.centerX) > (l1.width/2 + l2.width/2 + 1)) ||
+			(Math.abs(l2.centerY - l1.centerY) > (l1.height/2 + l2.height/2 + 1)))
 		{
 			return false;
 		}
@@ -438,8 +447,8 @@ myDraw2d.Util = Class.extend({
 			return true;
 		//next, if two centers have distance > width/2 + radius on x-axis,
 		//or distance > height/2 + radius on y-axis, return false
-		if((Math.abs(layer.centerX - node.centerX) > (layer.width/2 + node.radius))
-			|| ((Math.abs(layer.centerY - node.centerY)) > (layer.height/2 + node.radius)))
+		if((Math.abs(layer.centerX - node.centerX) > (layer.width/2 + node.radius + 1))
+			|| ((Math.abs(layer.centerY - node.centerY)) > (layer.height/2 + node.radius + 1)))
 		{
 			return false;
 		}
