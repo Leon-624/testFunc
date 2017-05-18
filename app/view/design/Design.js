@@ -47,7 +47,7 @@ Ext.define('testFunc.view.design.Design', {
                 style: {
                     backgroundColor: '#b0e0e6'
                 },
-    			height: 160,
+    			height: 170,
                 width: 65,
     			loader:{
     				url : 'html/schematicPalettes.html',

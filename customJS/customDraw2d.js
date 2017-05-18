@@ -35,13 +35,15 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
 	onDragEnter: function(draggedDomNode, draggedDomNodeHelper){
 		var shape = $(draggedDomNode).data('shape'),
 			imgDom = $(draggedDomNodeHelper).find("img");
-		if(shape === 'rectangle')
+		if(shape === 'layerRec')
 		{
+			//apply zoom factor
 			$(imgDom).css("width", this.util.DEFAULT_WIDTH_LAYERREC * (1/this.getZoom()));
 			$(imgDom).css("height", this.util.DEFAULT_HEIGHT_LAYERREC * (1/this.getZoom()));
 		}
-		else if(shape === 'circle')
+		else if(shape === 'nodeCir')
 		{
+			//apply zoom factor
 			$(imgDom).css("width", this.util.DEFAULT_RADIUS_NODECIR * 2 * (1/this.getZoom()));
 			$(imgDom).css("height", this.util.DEFAULT_RADIUS_NODECIR * 2 * (1/this.getZoom()));
 		}
@@ -54,7 +56,7 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
 	/**
      * @override
      * override onDragLeave for changing size of cloned element
-     * onDragLeave has one more parameter 'helper' because I modified the original draw2d.js.
+     * onDragLeave has one more parameter 'helper' as I modified the original draw2d.js
      */
 	onDragLeave: function(draggedDomNode, draggedDomNodeHelper){
 		var imgDom = $(draggedDomNodeHelper).find("img");
@@ -62,12 +64,12 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
 
 		var shape = $(draggedDomNode).data('shape'),
 			imgDom = $(draggedDomNodeHelper).find("img");
-		if(shape === 'rectangle')
+		if(shape === 'layerRec')
 		{
 			$(imgDom).css("width", this.util.DEFAULT_WIDTH_DOMIMAGE_LAYERREC);
 			$(imgDom).css("height", this.util.DEFAULT_HEIGHT_DOMIMAGE_LAYERREC);
 		}
-		else if(shape === 'circle')
+		else if(shape === 'nodeCir')
 		{
 			$(imgDom).css("width", this.util.DEFAULT_DIAMETER_DOMIMAGE_NODECIR);
 			$(imgDom).css("height", this.util.DEFAULT_DIAMETER_DOMIMAGE_NODECIR);
@@ -81,13 +83,19 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
 	/**
      * @override
      * override onDrop for dropping elements from outside div
+     * onDrop has two more parameters uiX, uiY as I modified the original draw2d.js 
+     * @param {number} cursorX, cursorY position of cursor
+     * @param {number} uiX, uiY position of ui element
      */
-	onDrop: function(droppedDomNode, x, y){
+	onDrop: function(droppedDomNode, cursorX, cursorY, uiX, uiY){
 		var shape = $(droppedDomNode).data('shape');
-		if(shape === 'rectangle')
+		if(shape === 'layerRec')
 		{
 			var layerDesc = new myDraw2d.shapeDesc.LayerRectangle(
-				x, y, this.util.DEFAULT_WIDTH_LAYERREC, this.util.DEFAULT_HEIGHT_LAYERREC);
+				uiX + this.util.DEFAULT_WIDTH_LAYERREC/2,
+				uiY + this.util.DEFAULT_HEIGHT_LAYERREC/2,
+				this.util.DEFAULT_WIDTH_LAYERREC,
+				this.util.DEFAULT_HEIGHT_LAYERREC);
 			var centerPos = this.util.decideLayerCenterPos(layerDesc, this.layerRecs, this.nodeCirs);
 			//if not overlaps with other LayerRectangles or NodeCircles, or can avoid by shifting, create layer
 			if(centerPos)
@@ -105,11 +113,11 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
 				console.log("Cannot add overlapped layer");
 			}
 		}
-		else if(shape === 'circle')
+		else if(shape === 'nodeCir')
 		{
 			//let (x, y) be the center of the image
 			var imgObj = new draw2d.shape.basic.NodeCircle(this.util);
-			var cmd = new draw2d.command.CommandAdd(this, imgObj, x-imgObj.getWidth()/2, y-imgObj.getHeight()/2);
+			var cmd = new draw2d.command.CommandAdd(this, imgObj, cursorX-imgObj.getWidth()/2, cursorY-imgObj.getHeight()/2);
 			this.getCommandStack().execute(cmd);
 			//add this node to nodeCirs array
 			this.nodeCirs.push(imgObj);
