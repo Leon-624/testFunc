@@ -18,13 +18,64 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
 	NAME: "draw2d.CustomCanvas",
 
 	/**
-     * @constructor 
+     * @constructor
      */
 	init: function(id){
 		this._super(id);
 		this.layerRecs = [];	//array of LayerRectangles
 		this.nodeCirs = [];		//array of NodeCircles
 		this.util = new myDraw2d.Util();
+	},
+
+	/**
+     * @override
+     * override onDragEnter for changing size of cloned element
+     * onDragEnter has one more parameter 'helper' because I modified the original draw2d.js.
+     */
+	onDragEnter: function(draggedDomNode, draggedDomNodeHelper){
+		var shape = $(draggedDomNode).data('shape'),
+			imgDom = $(draggedDomNodeHelper).find("img");
+		if(shape === 'rectangle')
+		{
+			$(imgDom).css("width", this.util.DEFAULT_WIDTH_LAYERREC * (1/this.getZoom()));
+			$(imgDom).css("height", this.util.DEFAULT_HEIGHT_LAYERREC * (1/this.getZoom()));
+		}
+		else if(shape === 'circle')
+		{
+			$(imgDom).css("width", this.util.DEFAULT_RADIUS_NODECIR * 2 * (1/this.getZoom()));
+			$(imgDom).css("height", this.util.DEFAULT_RADIUS_NODECIR * 2 * (1/this.getZoom()));
+		}
+		else
+		{
+			console.log("Shape is not correct.");
+		}
+	},
+
+	/**
+     * @override
+     * override onDragLeave for changing size of cloned element
+     * onDragLeave has one more parameter 'helper' because I modified the original draw2d.js.
+     */
+	onDragLeave: function(draggedDomNode, draggedDomNodeHelper){
+		var imgDom = $(draggedDomNodeHelper).find("img");
+		
+
+		var shape = $(draggedDomNode).data('shape'),
+			imgDom = $(draggedDomNodeHelper).find("img");
+		if(shape === 'rectangle')
+		{
+			$(imgDom).css("width", this.util.DEFAULT_WIDTH_DOMIMAGE_LAYERREC);
+			$(imgDom).css("height", this.util.DEFAULT_HEIGHT_DOMIMAGE_LAYERREC);
+		}
+		else if(shape === 'circle')
+		{
+			$(imgDom).css("width", this.util.DEFAULT_DIAMETER_DOMIMAGE_NODECIR);
+			$(imgDom).css("height", this.util.DEFAULT_DIAMETER_DOMIMAGE_NODECIR);
+		}
+		else
+		{
+			console.log("Shape is not correct.");
+		}
 	},
 
 	/**
@@ -36,7 +87,7 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
 		if(shape === 'rectangle')
 		{
 			var layerDesc = new myDraw2d.shapeDesc.LayerRectangle(
-				x, y, this.util.DEFAULT_WIDTH_RECTANGLE, this.util.DEFAULT_HEIGHT_RECTANGLE);
+				x, y, this.util.DEFAULT_WIDTH_LAYERREC, this.util.DEFAULT_HEIGHT_LAYERREC);
 			var centerPos = this.util.decideLayerCenterPos(layerDesc, this.layerRecs, this.nodeCirs);
 			//if not overlaps with other LayerRectangles or NodeCircles, or can avoid by shifting, create layer
 			if(centerPos)
@@ -82,7 +133,7 @@ draw2d.policy.canvas.CustomFadeoutDecorationPolicy = draw2d.policy.canvas.Fadeou
 	NAME: "draw2d.policy.canvas.CustomFadeoutDecorationPolicy",
 
 	/**
-     * @constructor 
+     * @constructor
      */
 	init: function()
     {
@@ -125,7 +176,7 @@ draw2d.policy.connection.CustomConnectionCreatePolicy = draw2d.policy.connection
 	NAME: "draw2d.policy.connection.CustomConnectionCreatePolicy",
 
 	/**
-     * @constructor 
+     * @constructor
      */
 	init: function(){
 		this._super([
@@ -203,11 +254,12 @@ draw2d.shape.basic.LayerRectangle = draw2d.shape.basic.Rectangle.extend({
      */
 	init: function(util){
 		this._super({
-			width: util.DEFAULT_WIDTH_RECTANGLE,
-			height: util.DEFAULT_HEIGHT_RECTANGLE,
+			width: util.DEFAULT_WIDTH_LAYERREC,
+			height: util.DEFAULT_HEIGHT_LAYERREC,
 			bgColor: '#FFFFC7',
 			radius: 10,
-			glow: true
+			glow: true,
+			resizeable: false
 		});
 		this.name = 'LayerRectangle';
 		this.childNodes = [];	//array of NodeCircles inside this layer
@@ -247,11 +299,12 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
      */
 	init: function(util){
 		this._super({
-			diameter: util.DEFAULT_RADIUS_CIRCLE * 2,
+			diameter: util.DEFAULT_RADIUS_NODECIR * 2,
 			stroke: 1,
 			color: '#000000',
 			bgColor: '#00A4D1',
-			glow: true
+			glow: true,
+			resizeable: false
 		});
 		this.name = 'NodeCircle'; 
 		this.parentLayer = null;	//parent LayerRectangle
@@ -289,9 +342,14 @@ myDraw2d.Util = Class.extend({
      * @constructor
      */
 	init: function(){
-		this.DEFAULT_WIDTH_RECTANGLE = 60;
-		this.DEFAULT_HEIGHT_RECTANGLE = 200;
-		this.DEFAULT_RADIUS_CIRCLE = 20;
+		this.DEFAULT_WIDTH_LAYERREC = 60;
+		this.DEFAULT_INTERVAL_HEIGHT = 20;	//the interval between circles in layer
+		this.DEFAULT_RADIUS_NODECIR = 20;
+		this.DEFAULT_HEIGHT_LAYERREC =
+			2 * this.DEFAULT_RADIUS_NODECIR + 2 * this.DEFAULT_INTERVAL_HEIGHT;
+		this.DEFAULT_WIDTH_DOMIMAGE_LAYERREC = 45;
+		this.DEFAULT_HEIGHT_DOMIMAGE_LAYERREC = 45;
+		this.DEFAULT_DIAMETER_DOMIMAGE_NODECIR = 45;
 	},
 
 	/**
@@ -518,7 +576,7 @@ myDraw2d.shapeDesc.LayerRectangle = Class.extend({
 	NAME: "myDraw2d.shapeDesc.LayerRectangle",
 
 	/**
-     * @constructor 
+     * @constructor
      */
 	init: function(centerX, centerY, width, height){
 		this.centerX = centerX;
@@ -560,7 +618,7 @@ myDraw2d.shapeDesc.NodeCircle = Class.extend({
 	NAME: "myDraw2d.shapeDesc.NodeCircle",
 
 	/**
-     * @constructor 
+     * @constructor
      */
 	init: function(centerX, centerY, radius){
 		this.centerX = centerX;

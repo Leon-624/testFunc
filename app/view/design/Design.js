@@ -43,8 +43,12 @@ Ext.define('testFunc.view.design.Design', {
     	this.items = [
     		{
     			xtype: 'component',
-    			//height: 200,
-                width: 60,
+                padding: '5, 5, 5, 5',
+                style: {
+                    backgroundColor: '#b0e0e6'
+                },
+    			height: 160,
+                width: 65,
     			loader:{
     				url : 'html/schematicPalettes.html',
                     autoLoad : true,

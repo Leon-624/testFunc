@@ -70,6 +70,7 @@ Ext.define('testFunc.view.design.DesignViewController', {
             step: 0.2,
             slide: function(event, ui){
                 me.canvas.setZoom(ui.value, true);
+                console.log("Set zoom factor: " + ui.value);
             }
         });
     }
