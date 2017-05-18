@@ -96,6 +96,7 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
 				uiY + this.util.DEFAULT_HEIGHT_LAYERREC/2,
 				this.util.DEFAULT_WIDTH_LAYERREC,
 				this.util.DEFAULT_HEIGHT_LAYERREC);
+			//calculate center position. see decideLayerCenterPos()
 			var centerPos = this.util.decideLayerCenterPos(layerDesc, this.layerRecs, this.nodeCirs);
 			//if not overlaps with other LayerRectangles or NodeCircles, or can avoid by shifting, create layer
 			if(centerPos)
@@ -115,10 +116,57 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
 		}
 		else if(shape === 'nodeCir')
 		{
-			//let (x, y) be the center of the image
 			var imgObj = new draw2d.shape.basic.NodeCircle(this.util);
-			var cmd = new draw2d.command.CommandAdd(this, imgObj, cursorX-imgObj.getWidth()/2, cursorY-imgObj.getHeight()/2);
+			var cmd = new draw2d.command.CommandAdd(this, imgObj, uiX, uiY);
 			this.getCommandStack().execute(cmd);
+			var parentLayer = imgObj.decideParentLayer(this.layerRecs);
+			//having parentLayer, add into this layer
+			if(parentLayer)
+			{
+				imgObj.parentLayer = parentLayer;
+				var index = imgObj.decideIndexInParentLayer();
+				var offset = this.util.DEFAULT_INTERVAL_HEIGHT + imgObj.getDiameter();
+				//apply offset for layer height
+				if(parentLayer.childNodes.length > 0)
+				{
+					cmd = new draw2d.command.CommandResize(parentLayer);
+					cmd.setDimension(parentLayer.getWidth(), parentLayer.getHeight() + offset);
+					this.getCommandStack().execute(cmd);
+				}
+				//apply offset for all nodes that have larger index
+				for(var i = parentLayer.childNodes.length - 1; i >= index ; --i)
+				{
+					var currNode = parentLayer.childNodes[i];
+					cmd = new draw2d.command.CommandMove(currNode);
+					cmd.setPosition(currNode.getX(), currNode.getY() + offset);
+					this.getCommandStack().execute(cmd);
+				}
+				//move imgObj to the according position
+				var previousNodePosY = null;
+				//if first node, set previousNodePosY to the y pos of parentLayer
+				if(index == 0)
+				{
+					previousNodePosY = parentLayer.getY();
+				}
+				//if not first node, take the y pos of the bottom of previous node
+				else
+				{
+					var preNode = parentLayer.childNodes[index - 1];
+					previousNodePosY = preNode.getY() + preNode.getDiameter();
+				}
+				cmd = new draw2d.command.CommandMove(imgObj);
+				cmd.setPosition(parentLayer.getX() + parentLayer.getWidth()/2 - imgObj.getDiameter()/2,
+								previousNodePosY + this.util.DEFAULT_INTERVAL_HEIGHT);
+				this.getCommandStack().execute(cmd);
+				//add imgObj to parentLayer.childNodes with according index
+				parentLayer.childNodes.splice(index, 0, imgObj);
+				console.log("add to index: " + index);
+			}
+			//no parentLayer
+			else
+			{
+				//some actions
+			}
 			//add this node to nodeCirs array
 			this.nodeCirs.push(imgObj);
 		}
@@ -270,7 +318,7 @@ draw2d.shape.basic.LayerRectangle = draw2d.shape.basic.Rectangle.extend({
 			resizeable: false
 		});
 		this.name = 'LayerRectangle';
-		this.childNodes = [];	//array of NodeCircles inside this layer
+		this.childNodes = [];	//array of NodeCircles inside this layer. maintain order as visible display
 	},
 
 	/**
@@ -288,6 +336,24 @@ draw2d.shape.basic.LayerRectangle = draw2d.shape.basic.Rectangle.extend({
      */
 	getCenterPos: function(){
 		return new draw2d.geo.Point(this.x + this.width/2, this.y + this.height/2);
+	},
+
+	/**
+     * @method
+     * @param {Number} x
+     * @param {number} y
+     * @returns {boolean} true if the point is inside this LayerRectangle
+     */
+	ifPointInside: function(x, y){
+		if((x >= this.x && x <= (this.x + this.width))
+			&& (y >= this.y && y <= (this.y + this.height)))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 });
@@ -333,6 +399,50 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
      */
 	getCenterPos: function(){
 		return new draw2d.geo.Point(this.x + this.width, this.y + this.width);
+	},
+
+	/**
+     * @method
+     * @param {array} layerRecs properties of CustomCanvas
+     * @returns {draw2d.shape.basic.LayerRectangle} or {null}
+     */
+	decideParentLayer: function(layerRecs){
+		var layerLen = layerRecs.length,
+			parentLayer = null;
+		for(var i = 0; i < layerLen; ++i)
+		{
+			var currLayer = layerRecs[i];
+			if(currLayer.ifPointInside(this.x + this.getDiameter()/2, this.y + this.getDiameter()/2))
+			{
+				//layers don't overlap, so at most one parentLayer
+				parentLayer = currLayer;
+				break;
+			}
+		}
+		return parentLayer;
+	},
+
+	/**
+     * @method
+     * the index is decided by the center position of each NodeCircle in the same layer
+     * @returns {Number} the index of this NodeCircle in its parentLayer (starting from 0)
+     * @returns {null} if parentLayer is null
+     */
+	decideIndexInParentLayer: function(){
+		if(!this.parentLayer)
+			return null;
+		var centerY = this.y + this.getDiameter()/2,
+			index = 0,
+			childNodes = this.parentLayer.childNodes;
+		for(index = 0; index < childNodes.length; ++index)
+		{
+			var currNode = childNodes[index];
+			if(centerY < (currNode.getY() + currNode.getDiameter()/2))
+			{
+				break;
+			}
+		}
+		return index;
 	}
 
 });
@@ -399,15 +509,22 @@ myDraw2d.Util = Class.extend({
 			for(var i = 0; i < nodeLen; ++i)
 			{
 				var currNode = nodeCirs[i];
-				var currNodeDesc = new myDraw2d.shapeDesc.NodeCircle(
+				//if currNode has parentLayer, then no need to examine currNode,
+				//because currNode would be inside that parentLayer,
+				//if overlaps with this currNode, then it would overlap with its parentLayer first
+				if(!currNode.parentLayer)
+				{
+					var currNodeDesc = new myDraw2d.shapeDesc.NodeCircle(
 					currNode.getX() + currNode.getDiameter()/2,
 					currNode.getY() + currNode.getDiameter()/2,
 					currNode.getDiameter()/2);
-				if(this.ifLayerOverlapNode(layer, currNodeDesc))
-				{
-					ifOverlapNode = true;
-					break;
+					if(this.ifLayerOverlapNode(layer, currNodeDesc))
+					{
+						ifOverlapNode = true;
+						break;
+					}
 				}
+				
 			}
 			//there exists overlapped NodeCircle, return null
 			if(ifOverlapNode)
@@ -459,14 +576,17 @@ myDraw2d.Util = Class.extend({
 			for(var i = 0; i < nodeLen; ++i)
 			{
 				var currNode = nodeCirs[i];
-				var currNodeDesc = new myDraw2d.shapeDesc.NodeCircle(
+				if(!currNode.parentLayer)
+				{
+					var currNodeDesc = new myDraw2d.shapeDesc.NodeCircle(
 					currNode.getX() + currNode.getDiameter()/2,
 					currNode.getY() + currNode.getDiameter()/2,
 					currNode.getDiameter()/2);
-				if(this.ifLayerOverlapNode(layer, currNodeDesc))
-				{
-					ifOverlapNode = true;
-					break;
+					if(this.ifLayerOverlapNode(layer, currNodeDesc))
+					{
+						ifOverlapNode = true;
+						break;
+					}
 				}
 			}
 			//there exists overlapped NodeCircle, return null
