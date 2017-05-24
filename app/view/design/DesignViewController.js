@@ -64,10 +64,10 @@ Ext.define('testFunc.view.design.DesignViewController', {
         var me = this;
         $('#zoomSlider').slider({
             orientation: 'vertical',
-            min: 0.2,
-            max: 2,
+            min: 0.1,
+            max: 5,
             value: 1,
-            step: 0.2,
+            step: 0.1,
             slide: function(event, ui){
                 me.canvas.setZoom(ui.value, true);
                 //console.log("Set zoom factor: " + ui.value);

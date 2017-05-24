@@ -45,9 +45,9 @@ Ext.define('testFunc.Application', {
                 {
                     xtype: 'design'
                 },
-                {
+                /*{
                     xtype: 'pie3d'
-                }
+                }*/
                 
                 /*{
                     xtype: 'cartable'

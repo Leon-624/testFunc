@@ -37,12 +37,21 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
 			imgDom = $(draggedDomNodeHelper).find("img");
 		if(shape === 'layerRec')
 		{
+			//store original dom image size
+			if(!this.util.DEFAULT_WIDTH_DOMIMAGE_LAYERREC)
+			this.util.DEFAULT_WIDTH_DOMIMAGE_LAYERREC = $(imgDom).width();
+			this.util.DEFAULT_HEIGHT_DOMIMAGE_LAYERREC = $(imgDom).height();
 			//apply zoom factor
 			$(imgDom).css("width", this.util.DEFAULT_WIDTH_LAYERREC * (1/this.getZoom()));
 			$(imgDom).css("height", this.util.DEFAULT_HEIGHT_LAYERREC * (1/this.getZoom()));
 		}
 		else if(shape === 'nodeCir')
 		{
+			//store original dom image size
+			if(!this.util.DEFAULT_DIAMETER_DOMIMAGE_NODECIR)
+			{
+				this.util.DEFAULT_DIAMETER_DOMIMAGE_NODECIR = $(imgDom).width();
+			}
 			//apply zoom factor
 			$(imgDom).css("width", this.util.DEFAULT_RADIUS_NODECIR * 2 * (1/this.getZoom()));
 			$(imgDom).css("height", this.util.DEFAULT_RADIUS_NODECIR * 2 * (1/this.getZoom()));
@@ -119,54 +128,8 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
 			var imgObj = new draw2d.shape.basic.NodeCircle(this.util);
 			var cmd = new draw2d.command.CommandAdd(this, imgObj, uiX, uiY);
 			this.getCommandStack().execute(cmd);
-			var parentLayer = imgObj.decideParentLayer(this.layerRecs);
-			//having parentLayer, add into this layer
-			if(parentLayer)
-			{
-				imgObj.parentLayer = parentLayer;
-				var index = imgObj.decideIndexInParentLayer();
-				var offset = this.util.DEFAULT_INTERVAL_HEIGHT + imgObj.getDiameter();
-				//apply offset for layer height
-				if(parentLayer.childNodes.length > 0)
-				{
-					cmd = new draw2d.command.CommandResize(parentLayer);
-					cmd.setDimension(parentLayer.getWidth(), parentLayer.getHeight() + offset);
-					this.getCommandStack().execute(cmd);
-				}
-				//apply offset for all nodes that have larger index
-				for(var i = parentLayer.childNodes.length - 1; i >= index ; --i)
-				{
-					var currNode = parentLayer.childNodes[i];
-					cmd = new draw2d.command.CommandMove(currNode);
-					cmd.setPosition(currNode.getX(), currNode.getY() + offset);
-					this.getCommandStack().execute(cmd);
-				}
-				//move imgObj to the according position
-				var previousNodePosY = null;
-				//if first node, set previousNodePosY to the y pos of parentLayer
-				if(index == 0)
-				{
-					previousNodePosY = parentLayer.getY();
-				}
-				//if not first node, take the y pos of the bottom of previous node
-				else
-				{
-					var preNode = parentLayer.childNodes[index - 1];
-					previousNodePosY = preNode.getY() + preNode.getDiameter();
-				}
-				cmd = new draw2d.command.CommandMove(imgObj);
-				cmd.setPosition(parentLayer.getX() + parentLayer.getWidth()/2 - imgObj.getDiameter()/2,
-								previousNodePosY + this.util.DEFAULT_INTERVAL_HEIGHT);
-				this.getCommandStack().execute(cmd);
-				//add imgObj to parentLayer.childNodes with according index
-				parentLayer.childNodes.splice(index, 0, imgObj);
-				console.log("add to index: " + index);
-			}
-			//no parentLayer
-			else
-			{
-				//some actions
-			}
+			//adjust position and set up parent-child if inside a layer
+			imgObj._adjustPosition(this, true);
 			//add this node to nodeCirs array
 			this.nodeCirs.push(imgObj);
 		}
@@ -175,7 +138,6 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
 			console.log("Shape is not correct.");
 		}
 	}
-
 });
 
 
@@ -322,15 +284,6 @@ draw2d.shape.basic.LayerRectangle = draw2d.shape.basic.Rectangle.extend({
 	},
 
 	/**
-     * @override
-     * override onDragEnd to bring the layer to the back
-     */
-	onDragEnd: function(){
-		this.toBack();
-		this._super();
-	},
-
-	/**
      * @method
      * @returns {draw2d.geo.Point} the center point of LayerRectangle
      */
@@ -382,15 +335,33 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
 		});
 		this.name = 'NodeCircle'; 
 		this.parentLayer = null;	//parent LayerRectangle
+		this.initPort();
+	},
+
+	/**
+     * @method
+     */
+	initPort: function(){
+		this.createPort('hybrid', new draw2d.layout.locator.LeftLocator());
+		this.createPort('hybrid', new draw2d.layout.locator.RightLocator());
 	},
 
 	/**
      * @override
-     * override onDragStart to bring the node to the front;
+     * override onDragStart to bring the node to the front
      */
 	onDragStart: function(){
 		this.toFront();
 		this._super();
+	},
+
+	/**
+     * @override
+     * override onDragEnd to adjust position and set up parent-child relationship if in a layer
+     */
+	onDragEnd: function(){
+		this._super();
+		this._adjustPosition(this.getCanvas(), true);
 	},
 
 	/**
@@ -403,10 +374,86 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
 
 	/**
      * @method
+     if center pos is inside a layer, set up parent-child relationship and insert to according position
+     * @param {draw2d.CustomCanvas} canvas
+     * @param {boolean} animated true to animate the process
+     */
+	_adjustPosition: function(canvas, animated){
+		var parentLayer = this._decideParentLayer(canvas.layerRecs);
+		//having parentLayer
+		if(parentLayer)
+		{
+			//set parentLayer
+			this.parentLayer = parentLayer;
+			var index = this._decideIndexInParentLayer();
+			var offset = canvas.util.DEFAULT_INTERVAL_HEIGHT + this.getDiameter();
+			//apply offset for layer height
+			if(parentLayer.childNodes.length > 0)
+			{
+				cmd = new draw2d.command.CommandResize(parentLayer);
+				cmd.setDimension(parentLayer.getWidth(), parentLayer.getHeight() + offset);
+				canvas.getCommandStack().execute(cmd);
+			}
+			//apply offset for all nodes that have larger index
+			for(var i = parentLayer.childNodes.length - 1; i >= index ; --i)
+			{
+				var currNode = parentLayer.childNodes[i];
+				cmd = new draw2d.command.CommandMove(currNode);
+				cmd.setPosition(currNode.getX(), currNode.getY() + offset);
+				canvas.getCommandStack().execute(cmd);
+			}
+			//move to the according position
+			var previousNodePosY = null;
+			//if first node, set previousNodePosY to the y pos of parentLayer
+			if(index == 0)
+			{
+				previousNodePosY = parentLayer.getY();
+			}
+			//if not first node, take the y pos of the bottom of previous node
+			else
+			{
+				var preNode = parentLayer.childNodes[index - 1];
+				previousNodePosY = preNode.getY() + preNode.getDiameter();
+			}
+			if(animated)
+			{
+				var myTweenable = new Tweenable();
+				var me = this;
+            	myTweenable.tween({
+					from:     { 'x': me.getX(),
+								'y': me.getY()},
+                	to:       { 'x': parentLayer.getX() + parentLayer.getWidth()/2 - me.getDiameter()/2,
+                				'y': previousNodePosY + canvas.util.DEFAULT_INTERVAL_HEIGHT},
+                	duration: 200,
+                	easing: "easeOutSine",
+                	step: function(params) {
+                   		cmd = new draw2d.command.CommandMove(me);
+						cmd.setPosition(params.x, params.y);
+						canvas.getCommandStack().execute(cmd);
+                	},
+                	finish: function(state) {
+                		//no action
+                	}
+            	});
+			}
+			else
+			{
+				cmd = new draw2d.command.CommandMove(this);
+				cmd.setPosition(parentLayer.getX() + parentLayer.getWidth()/2 - this.getDiameter()/2,
+								previousNodePosY + canvas.util.DEFAULT_INTERVAL_HEIGHT);
+				canvas.getCommandStack().execute(cmd);
+			}
+			//add to parentLayer.childNodes with according index
+			parentLayer.childNodes.splice(index, 0, this);
+		}
+	},
+
+	/**
+     * @method
      * @param {array} layerRecs properties of CustomCanvas
      * @returns {draw2d.shape.basic.LayerRectangle} or {null}
      */
-	decideParentLayer: function(layerRecs){
+	_decideParentLayer: function(layerRecs){
 		var layerLen = layerRecs.length,
 			parentLayer = null;
 		for(var i = 0; i < layerLen; ++i)
@@ -428,7 +475,7 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
      * @returns {Number} the index of this NodeCircle in its parentLayer (starting from 0)
      * @returns {null} if parentLayer is null
      */
-	decideIndexInParentLayer: function(){
+	_decideIndexInParentLayer: function(){
 		if(!this.parentLayer)
 			return null;
 		var centerY = this.y + this.getDiameter()/2,
@@ -461,13 +508,13 @@ myDraw2d.Util = Class.extend({
      */
 	init: function(){
 		this.DEFAULT_WIDTH_LAYERREC = 60;
-		this.DEFAULT_INTERVAL_HEIGHT = 20;	//the interval between circles in layer
+		this.DEFAULT_INTERVAL_HEIGHT = 25;	//the interval between circles in layer
 		this.DEFAULT_RADIUS_NODECIR = 20;
 		this.DEFAULT_HEIGHT_LAYERREC =
 			2 * this.DEFAULT_RADIUS_NODECIR + 2 * this.DEFAULT_INTERVAL_HEIGHT;
-		this.DEFAULT_WIDTH_DOMIMAGE_LAYERREC = 45;
-		this.DEFAULT_HEIGHT_DOMIMAGE_LAYERREC = 45;
-		this.DEFAULT_DIAMETER_DOMIMAGE_NODECIR = 45;
+		this.DEFAULT_WIDTH_DOMIMAGE_LAYERREC = null;	//value determined in onDragEnter
+		this.DEFAULT_HEIGHT_DOMIMAGE_LAYERREC = null;	//value determined in onDragEnter
+		this.DEFAULT_DIAMETER_DOMIMAGE_NODECIR = null;	//value determined in onDragEnter
 	},
 
 	/**

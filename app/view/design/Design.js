@@ -6,6 +6,8 @@ Ext.define('testFunc.view.design.Design', {
     controller: 'design',
 
     layout: 'hbox',
+    width: '100%',
+    //height: '100%',
     title: 'Design (try connecting ports of entities by drag-drop or click-click?)',
 
     initComponent: function(){
@@ -60,10 +62,21 @@ Ext.define('testFunc.view.design.Design', {
     		},
     		{
     			xtype: 'component',
+                flex: 1,
+                height: $(document).height() - 100,
+                //height: '600px',
     			autoScroll: true,
-    			html: '<div id="gfx_holder" class="ui-droppable" style="width:1000px; height:600px; background-color:#eff5ff;"></div>'
+    			html: '<div id="gfx_holder" class="ui-droppable" style="width:10000px; height:10000px; background-color:#eff5ff;"></div>'
                     + '<div id="zoomSlider" style="height:150px; position:absolute; top:30px; left:30px; z-index:26000"></div>'
-    		}
+    		},
+            {
+                xtype: 'component',
+                width: 200,
+                style: {
+                    backgroundColor: '#b0e0e6'
+                },
+                html: 'Panel'
+            }
     	];
 
     	this.callParent(arguments);
