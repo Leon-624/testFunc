@@ -128,8 +128,8 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
 			var imgObj = new draw2d.shape.basic.NodeCircle(this.util);
 			var cmd = new draw2d.command.CommandAdd(this, imgObj, uiX, uiY);
 			this.getCommandStack().execute(cmd);
-			//adjust position and set up parent-child if inside a layer
-			imgObj._adjustPosition(this, true);
+			//call _adjustPosition() which updates parent-child relationship and set up position
+			imgObj._adjustPosition(true);
 			//add this node to nodeCirs array
 			this.nodeCirs.push(imgObj);
 		}
@@ -334,7 +334,8 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
 			resizeable: false
 		});
 		this.name = 'NodeCircle'; 
-		this.parentLayer = null;	//parent LayerRectangle
+		this.parentLayer = null;	//parent LayerRectangle; update in _adjustPosition() which is called when onDrop or onDragEnd
+		this.preParentLayer = null;	//previous parent LayerRectangle; update to parentLayer when onDragStart
 		this.initPort();
 	},
 
@@ -348,20 +349,21 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
 
 	/**
      * @override
-     * override onDragStart to bring the node to the front
+     * override onDragStart to bring the node to the front; update preParentLayer
      */
 	onDragStart: function(){
-		this.toFront();
 		this._super();
+		this.toFront();
+		this.preParentLayer = this.parentLayer;
 	},
 
 	/**
      * @override
-     * override onDragEnd to adjust position and set up parent-child relationship if in a layer
+     * override onDragEnd to call _adjustPosition() which updates parent-child relationship and set up position
      */
 	onDragEnd: function(){
 		this._super();
-		this._adjustPosition(this.getCanvas(), true);
+		this._adjustPosition(true);
 	},
 
 	/**
@@ -374,30 +376,58 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
 
 	/**
      * @method
-     if center pos is inside a layer, set up parent-child relationship and insert to according position
-     * @param {draw2d.CustomCanvas} canvas
+     * update parent-child relationship and set up position; called when onDrop or onDragEnd
      * @param {boolean} animated true to animate the process
      */
-	_adjustPosition: function(canvas, animated){
-		var parentLayer = this._decideParentLayer(canvas.layerRecs);
-		//having parentLayer
-		if(parentLayer)
+	_adjustPosition: function(animated){
+		var canvas = this.getCanvas();
+		//update parentLayer
+		this.parentLayer = this._decideParentLayer(canvas.layerRecs);
+
+		//preParentLayer is not null, adjust preParentLayer layout and update parent-child relationship
+		if(this.preParentLayer)
 		{
-			//set parentLayer
-			this.parentLayer = parentLayer;
-			var index = this._decideIndexInParentLayer();
+			var index = this.preParentLayer.childNodes.indexOf(this);
 			var offset = canvas.util.DEFAULT_INTERVAL_HEIGHT + this.getDiameter();
 			//apply offset for layer height
-			if(parentLayer.childNodes.length > 0)
+			if(this.preParentLayer.childNodes.length > 1)
 			{
-				cmd = new draw2d.command.CommandResize(parentLayer);
-				cmd.setDimension(parentLayer.getWidth(), parentLayer.getHeight() + offset);
+				cmd = new draw2d.command.CommandResize(this.preParentLayer);
+				cmd.setDimension(this.preParentLayer.getWidth(), this.preParentLayer.getHeight() - offset);
 				canvas.getCommandStack().execute(cmd);
 			}
 			//apply offset for all nodes that have larger index
-			for(var i = parentLayer.childNodes.length - 1; i >= index ; --i)
+			for(var i = index + 1; i < this.preParentLayer.childNodes.length; ++i)
 			{
-				var currNode = parentLayer.childNodes[i];
+				var currNode = this.preParentLayer.childNodes[i];
+				cmd = new draw2d.command.CommandMove(currNode);
+				cmd.setPosition(currNode.getX(), currNode.getY() - offset);
+				canvas.getCommandStack().execute(cmd);
+			}
+			//remove this node from preParentLayer.childNodes
+			this.preParentLayer.childNodes.splice(index, 1);
+		}
+		//preParentLayer is null
+		else
+		{
+			//no action
+		}
+		//parentLayer is not null, adjust parentLayer layout and update parent-child relationship
+		if(this.parentLayer)
+		{
+			var index = this._decideIndexInParentLayer();
+			var offset = canvas.util.DEFAULT_INTERVAL_HEIGHT + this.getDiameter();
+			//apply offset for layer height
+			if(this.parentLayer.childNodes.length > 0)
+			{
+				cmd = new draw2d.command.CommandResize(this.parentLayer);
+				cmd.setDimension(this.parentLayer.getWidth(), this.parentLayer.getHeight() + offset);
+				canvas.getCommandStack().execute(cmd);
+			}
+			//apply offset for all nodes that have larger index
+			for(var i = this.parentLayer.childNodes.length - 1; i >= index ; --i)
+			{
+				var currNode = this.parentLayer.childNodes[i];
 				cmd = new draw2d.command.CommandMove(currNode);
 				cmd.setPosition(currNode.getX(), currNode.getY() + offset);
 				canvas.getCommandStack().execute(cmd);
@@ -407,12 +437,12 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
 			//if first node, set previousNodePosY to the y pos of parentLayer
 			if(index == 0)
 			{
-				previousNodePosY = parentLayer.getY();
+				previousNodePosY = this.parentLayer.getY();
 			}
 			//if not first node, take the y pos of the bottom of previous node
 			else
 			{
-				var preNode = parentLayer.childNodes[index - 1];
+				var preNode = this.parentLayer.childNodes[index - 1];
 				previousNodePosY = preNode.getY() + preNode.getDiameter();
 			}
 			if(animated)
@@ -422,7 +452,7 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
             	myTweenable.tween({
 					from:     { 'x': me.getX(),
 								'y': me.getY()},
-                	to:       { 'x': parentLayer.getX() + parentLayer.getWidth()/2 - me.getDiameter()/2,
+                	to:       { 'x': this.parentLayer.getX() + this.parentLayer.getWidth()/2 - me.getDiameter()/2,
                 				'y': previousNodePosY + canvas.util.DEFAULT_INTERVAL_HEIGHT},
                 	duration: 200,
                 	easing: "easeOutSine",
@@ -439,17 +469,24 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
 			else
 			{
 				cmd = new draw2d.command.CommandMove(this);
-				cmd.setPosition(parentLayer.getX() + parentLayer.getWidth()/2 - this.getDiameter()/2,
+				cmd.setPosition(this.parentLayer.getX() + this.parentLayer.getWidth()/2 - this.getDiameter()/2,
 								previousNodePosY + canvas.util.DEFAULT_INTERVAL_HEIGHT);
 				canvas.getCommandStack().execute(cmd);
 			}
 			//add to parentLayer.childNodes with according index
-			parentLayer.childNodes.splice(index, 0, this);
+			this.parentLayer.childNodes.splice(index, 0, this);
+		}
+		//parentLayer is null
+		else
+		{
+			//no action
 		}
 	},
 
 	/**
      * @method
+     * a layer is parent if the center position of node is inside this layer
+     * call this method to set up parent every time a node is dropped or dragged
      * @param {array} layerRecs properties of CustomCanvas
      * @returns {draw2d.shape.basic.LayerRectangle} or {null}
      */
