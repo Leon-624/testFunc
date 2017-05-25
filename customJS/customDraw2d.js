@@ -608,7 +608,6 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
 						cmd = new draw2d.command.CommandMove(currNode);
 						cmd.setPosition(currNode.getX(), currNode.getY() - offset);
 						canvas.getCommandStack().execute(cmd);
-						console.log("index " + i + " has Y: " + (currNode.getY()));
 					}
 				}
 				else
@@ -629,7 +628,6 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
 					if(afterIndex > preIndex)
 					{
 						var upNode = thisNode.parentLayer.childNodes[afterIndex - 1];
-						console.log("upNode has Y: " + upNode.getY());
 						y = upNode.getY() + upNode.getDiameter() + canvas.util.DEFAULT_INTERVAL_HEIGHT;
 						//add to parentLayer.childNodes with according index
 						thisNode.parentLayer.childNodes.splice(preIndex, 1);

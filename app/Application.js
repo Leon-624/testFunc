@@ -14,11 +14,15 @@ Ext.define('testFunc.Application', {
     /*stores:[
         "Users"
     ],*/
-    requires: [
+    /*requires: [
         "testFunc.view.user.UserForm",
         'testFunc.view.user.UserList',
         'testFunc.view.dd.CarTable',
         'testFunc.model.User'
+    ],*/
+    requires: [
+        'testFunc.view.design.Design',
+        'testFunc.view.design.DesignViewController'
     ],
     
     launch: function () {

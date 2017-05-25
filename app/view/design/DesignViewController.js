@@ -4,11 +4,11 @@ Ext.define('testFunc.view.design.DesignViewController', {
     alias: 'controller.design',
 
     onAfterRender: function(){
-    	console.log("Design ViewController onAfterRender Fired");
+    	//console.log("Design ViewController onAfterRender Fired");
     },
 
     onPalettesLoad: function(){
-        console.log("onPalettesLoad Fired");
+        //console.log("onPalettesLoad Fired");
         this.initCanvas();
         this.initSlider();
     },
