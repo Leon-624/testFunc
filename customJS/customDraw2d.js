@@ -545,6 +545,136 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
 		//update parentLayer
 		this.parentLayer = this._decideParentLayer();
 
+		//special case: preParentLayer and parentLayer is the same layer
+		//no need to adjust layer height; only shift nodes between drag drop position
+		if(this.preParentLayer === this.parentLayer && this.parentLayer)
+		{
+			var preIndex = this.parentLayer.childNodes.indexOf(this),
+				afterIndex = this._decideIndexInParentLayer();
+			//if this case, only need to move this node back to original position
+			if(afterIndex == preIndex || afterIndex == (preIndex + 1))
+			{
+				var previousNodePosY = null;
+				//if first node, set previousNodePosY to the y pos of parentLayer
+				if(preIndex == 0)
+				{
+					previousNodePosY = this.parentLayer.getY();
+				}
+				//if not first node, take the y pos of the bottom of previous node
+				else
+				{
+					var preNode = this.parentLayer.childNodes[preIndex - 1];
+					previousNodePosY = preNode.getY() + preNode.getDiameter();
+				}
+				if(animated)
+				{
+					var myTweenable = new Tweenable();
+					var me = this;
+            		myTweenable.tween({
+						from:     { 'x': me.getX(),
+									'y': me.getY()},
+                		to:       { 'x': this.parentLayer.getX() + this.parentLayer.getWidth()/2 - me.getDiameter()/2,
+                					'y': previousNodePosY + canvas.util.DEFAULT_INTERVAL_HEIGHT},
+                		duration: 200,
+                		easing: "easeOutSine",
+                		step: function(params) {
+                   			cmd = new draw2d.command.CommandMove(me);
+							cmd.setPosition(params.x, params.y);
+							canvas.getCommandStack().execute(cmd);
+                		},
+                		finish: function(state) {
+                			//no action
+                		}
+            		});
+				}
+				else
+				{
+					cmd = new draw2d.command.CommandMove(this);
+					cmd.setPosition(this.parentLayer.getX() + this.parentLayer.getWidth()/2 - this.getDiameter()/2,
+									previousNodePosY + canvas.util.DEFAULT_INTERVAL_HEIGHT);
+					canvas.getCommandStack().execute(cmd);
+				}
+			}
+			//otherwise, shift nodes in between, then move this node
+			else
+			{
+				var offset = canvas.util.DEFAULT_INTERVAL_HEIGHT + this.getDiameter();
+				//shift nodes in between
+				if(afterIndex > preIndex)
+				{
+					for(var i = preIndex + 1; i < afterIndex; ++i)
+					{
+						var currNode = this.parentLayer.childNodes[i];
+						cmd = new draw2d.command.CommandMove(currNode);
+						cmd.setPosition(currNode.getX(), currNode.getY() - offset);
+						canvas.getCommandStack().execute(cmd);
+						console.log("index " + i + " has Y: " + (currNode.getY()));
+					}
+				}
+				else
+				{
+					for(var i = preIndex - 1; i >= afterIndex; --i)
+					{
+						var currNode = this.parentLayer.childNodes[i];
+						cmd = new draw2d.command.CommandMove(currNode);
+						cmd.setPosition(currNode.getX(), currNode.getY() + offset);
+						canvas.getCommandStack().execute(cmd);
+					}
+				}
+				//move this node to the according position
+				//need setTimeout, otherwise will not work correctly
+				var thisNode = this;
+				setTimeout(function(){
+					var y = null;
+					if(afterIndex > preIndex)
+					{
+						var upNode = thisNode.parentLayer.childNodes[afterIndex - 1];
+						console.log("upNode has Y: " + upNode.getY());
+						y = upNode.getY() + upNode.getDiameter() + canvas.util.DEFAULT_INTERVAL_HEIGHT;
+						//add to parentLayer.childNodes with according index
+						thisNode.parentLayer.childNodes.splice(preIndex, 1);
+						thisNode.parentLayer.childNodes.splice(afterIndex - 1, 0, thisNode);
+					}
+					else
+					{
+						var downNode = thisNode.parentLayer.childNodes[afterIndex];
+						y = downNode.getY() - thisNode.getDiameter() - canvas.util.DEFAULT_INTERVAL_HEIGHT;
+						//add to parentLayer.childNodes with according index
+						thisNode.parentLayer.childNodes.splice(preIndex, 1);
+						thisNode.parentLayer.childNodes.splice(afterIndex, 0, thisNode);
+					}
+					if(animated)
+					{
+						var myTweenable = new Tweenable();
+            			myTweenable.tween({
+							from:     { 'x': thisNode.getX(),
+										'y': thisNode.getY()},
+                			to:       { 'x': thisNode.parentLayer.getX() + thisNode.parentLayer.getWidth()/2 - thisNode.getDiameter()/2,
+                						'y': y},
+                			duration: 200,
+                			easing: "easeOutSine",
+                			step: function(params) {
+                				cmd = new draw2d.command.CommandMove(thisNode);
+								cmd.setPosition(params.x, params.y);
+								canvas.getCommandStack().execute(cmd);
+                			},
+                			finish: function(state) {
+                				//no action
+                			}
+            			});
+					}
+					else
+					{
+						cmd = new draw2d.command.CommandMove(thisNode);
+						cmd.setPosition(thisNode.parentLayer.getX() + thisNode.parentLayer.getWidth()/2 - thisNode.getDiameter()/2,
+										y);
+						canvas.getCommandStack().execute(cmd);
+					}
+				}, 20);
+			}
+			return;
+		}
+
 		//preParentLayer is not null, adjust preParentLayer layout and update parent-child relationship
 		if(this.preParentLayer)
 		{
@@ -613,7 +743,7 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
             	myTweenable.tween({
 					from:     { 'x': me.getX(),
 								'y': me.getY()},
-                	to:       { 'x': this.parentLayer.getX() + this.parentLayer.getWidth()/2 - me.getDiameter()/2,
+                	to:       { 'x': me.parentLayer.getX() + me.parentLayer.getWidth()/2 - me.getDiameter()/2,
                 				'y': previousNodePosY + canvas.util.DEFAULT_INTERVAL_HEIGHT},
                 	duration: 200,
                 	easing: "easeOutSine",
@@ -682,9 +812,13 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
 		for(index = 0; index < childNodes.length; ++index)
 		{
 			var currNode = childNodes[index];
-			if(centerY < (currNode.getY() + currNode.getDiameter()/2))
+			//it is important that currNode is not this, because a node can be dragged to the same layer
+			if(currNode !== this)
 			{
-				break;
+				if(centerY < (currNode.getY() + currNode.getDiameter()/2))
+				{
+					break;
+				}
 			}
 		}
 		return index;
