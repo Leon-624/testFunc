@@ -114,6 +114,7 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
 				var cmd = new draw2d.command.CommandAdd(this, imgObj,
 					centerPos.getX()-imgObj.getWidth()/2, centerPos.getY()-imgObj.getHeight()/2);
 				this.getCommandStack().execute(cmd);
+				imgObj.toBack();
 				//add this layer to layerRecs array
 				this.layerRecs.push(imgObj);
 			}
@@ -280,7 +281,159 @@ draw2d.shape.basic.LayerRectangle = draw2d.shape.basic.Rectangle.extend({
 			resizeable: false
 		});
 		this.name = 'LayerRectangle';
-		this.childNodes = [];	//array of NodeCircles inside this layer. maintain order as visible display
+		this.childNodes = [];		//array of NodeCircles inside this layer. maintain order as visible display
+		this.prePosition = null;	//update when onDragStart
+		this.preDragPosition = null;//only used in onDrag for layout purpose; update when onDragStart and onDrag
+		this.initPolicies();
+	},
+
+	/**
+     * @method
+     */
+	initPolicies: function(){
+		this.installEditPolicy(new draw2d.policy.figure.SelectionFeedbackPolicy({
+			//shift all child nodes when dragging layer and update preDragPosition
+			onDrag: function(canvas, figure){
+				var currPos = figure.getPosition(),
+				offsetX = currPos.getX() - figure.preDragPosition.getX(),
+				offsetY = currPos.getY() - figure.preDragPosition.getY();
+				for(var i = 0; i < figure.childNodes.length; ++i)
+				{
+					var currNode = figure.childNodes[i];
+					cmd = new draw2d.command.CommandMove(currNode);
+					cmd.setPosition(currNode.getX() + offsetX, currNode.getY() + offsetY);
+					canvas.getCommandStack().execute(cmd);
+				}
+				//update preDragPosition
+				figure.preDragPosition = currPos;
+			},
+			//bring layer and child nodes to front
+			//isPrimarySelection here is layerRectangle
+			/*onSelect: function(figure, isPrimarySelection){
+				isPrimarySelection.toFront();
+				for(var i = 0; i < isPrimarySelection.childNodes.length; ++i)
+				{
+					isPrimarySelection.childNodes[i].toFront();
+				}
+			}*/
+		}));
+	},
+
+	/**
+     * @override
+     * override onDragStart to update prePosition and preDragPosition
+     */
+	onDragStart: function(){
+		this._super();
+		//update prePosition
+		this.prePosition = this.getPosition();
+		//update preDragPosition
+		this.preDragPosition = this.getPosition();
+		//for display purpose, bring all to front; then bring layer to back on drag end
+		this.toFront();
+		for(var i = 0; i < this.childNodes.length; ++i)
+		{
+			this.childNodes[i].toFront();
+		}
+	},
+
+	/**
+     * @override
+     * override onDragEnd to move back to prePosition if overlaps with other layers or nodes
+     */
+	onDragEnd: function(){
+		this._super();
+		//detect if overlaps with other layers
+		var ifOverlap = false,
+			canvas = this.getCanvas();
+		for(var i = 0; i < canvas.layerRecs.length; ++i)
+		{
+			var currLayer = canvas.layerRecs[i];
+			if(currLayer !== this)
+			{
+				//overlap
+				if(this.ifOverlapWithLayer(currLayer))
+				{
+					ifOverlap = true;
+					break;
+				}
+			}
+		}
+		//detect if overlaps with other nodes
+		if(!ifOverlap)
+		{
+			var layerDesc = new myDraw2d.shapeDesc.LayerRectangle(
+										this.getX() + this.getWidth()/2,
+										this.getY() + this.getHeight()/2,
+										this.getWidth(),
+										this.getHeight());
+			for(var i = 0; i < canvas.nodeCirs.length; ++i)
+			{
+				var currNode = canvas.nodeCirs[i];
+				if(!currNode.parentLayer)
+				{
+					var currNodeDesc = new myDraw2d.shapeDesc.NodeCircle(
+											currNode.getX() + currNode.getDiameter()/2,
+											currNode.getY() + currNode.getDiameter()/2,
+											currNode.getDiameter()/2);
+					if(canvas.util.ifLayerOverlapNode(layerDesc, currNodeDesc))
+					{
+						ifOverlap = true;
+						break;
+					}
+				}
+			}
+		}
+		//if overlaps, shift layer and child nodes back to prePosition
+		if(ifOverlap)
+		{
+			var currPos = this.getPosition(),
+			offsetX = currPos.getX() - this.prePosition.getX(),
+			offsetY = currPos.getY() - this.prePosition.getY();
+			//move layer
+			cmd = new draw2d.command.CommandMove(this);
+			cmd.setPosition(this.prePosition);
+			canvas.getCommandStack().execute(cmd);
+			//move nodes
+			for(var i = 0; i < this.childNodes.length; ++i)
+			{
+				var currNode = this.childNodes[i];
+				cmd = new draw2d.command.CommandMove(currNode);
+				cmd.setPosition(currNode.getX() - offsetX, currNode.getY() - offsetY);
+				canvas.getCommandStack().execute(cmd);
+			}
+		}
+		//for display purpose, bring layer to back
+		this.toBack();
+	},
+
+	/**
+     * @method
+     * @param {draw2d.shape.basic.LayerRectangle} layer
+     * @returns {boolean} true if overlaps with given layer
+     */
+	ifOverlapWithLayer: function(layer){
+		var l1 = {
+			centerX: this.x + this.width/2,
+			centerY: this.y + this.height/2,
+			width: this.width,
+			height: this.height
+		};
+		var l2 = {
+			centerX: layer.x + layer.width/2,
+			centerY: layer.y + layer.height/2,
+			width: layer.width,
+			height: layer.height
+		};
+		if((Math.abs(l2.centerX - l1.centerX) > (l1.width/2 + l2.width/2 + 2)) ||
+			(Math.abs(l2.centerY - l1.centerY) > (l1.height/2 + l2.height/2 + 2)))
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
 	},
 
 	/**
@@ -337,6 +490,7 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
 		this.parentLayer = null;	//parent LayerRectangle; update in _adjustPosition() which is called when onDrop or onDragEnd
 		this.preParentLayer = null;	//previous parent LayerRectangle; update to parentLayer when onDragStart
 		this.initPort();
+		this.initPolicies();
 	},
 
 	/**
@@ -348,12 +502,19 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
 	},
 
 	/**
+     * @method
+     */
+	initPolicies: function(){
+		this.installEditPolicy(new draw2d.policy.figure.SelectionFeedbackPolicy({
+		}));
+	},
+
+	/**
      * @override
      * override onDragStart to bring the node to the front; update preParentLayer
      */
 	onDragStart: function(){
 		this._super();
-		this.toFront();
 		this.preParentLayer = this.parentLayer;
 	},
 
@@ -382,7 +543,7 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
 	_adjustPosition: function(animated){
 		var canvas = this.getCanvas();
 		//update parentLayer
-		this.parentLayer = this._decideParentLayer(canvas.layerRecs);
+		this.parentLayer = this._decideParentLayer();
 
 		//preParentLayer is not null, adjust preParentLayer layout and update parent-child relationship
 		if(this.preParentLayer)
@@ -487,11 +648,11 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
      * @method
      * a layer is parent if the center position of node is inside this layer
      * call this method to set up parent every time a node is dropped or dragged
-     * @param {array} layerRecs properties of CustomCanvas
      * @returns {draw2d.shape.basic.LayerRectangle} or {null}
      */
-	_decideParentLayer: function(layerRecs){
-		var layerLen = layerRecs.length,
+	_decideParentLayer: function(){
+		var layerRecs = this.getCanvas().layerRecs,
+			layerLen = layerRecs.length,
 			parentLayer = null;
 		for(var i = 0; i < layerLen; ++i)
 		{
@@ -694,8 +855,8 @@ myDraw2d.Util = Class.extend({
      * @returns {boolean} true if two LayerRectangles overlap
      */
 	ifLayersOverlap: function(l1, l2){
-		if((Math.abs(l2.centerX - l1.centerX) > (l1.width/2 + l2.width/2 + 1)) ||
-			(Math.abs(l2.centerY - l1.centerY) > (l1.height/2 + l2.height/2 + 1)))
+		if((Math.abs(l2.centerX - l1.centerX) > (l1.width/2 + l2.width/2 + 2)) ||
+			(Math.abs(l2.centerY - l1.centerY) > (l1.height/2 + l2.height/2 + 2)))
 		{
 			return false;
 		}
