@@ -13,6 +13,25 @@ Ext.define('testFunc.view.design.DesignViewController', {
         this.initSlider();
     },
 
+    initCanvas: function(){
+        this.canvas = new draw2d.CustomCanvas("gfx_holder");
+    },
+
+    initSlider: function(){
+        var me = this;
+        $('#zoomSlider').slider({
+            orientation: 'vertical',
+            min: 0.1,
+            max: 5,
+            value: 1,
+            step: 0.1,
+            slide: function(event, ui){
+                me.canvas.setZoom(ui.value, true);
+                //console.log("Set zoom factor: " + ui.value);
+            }
+        });
+    },
+
     onSaveClick: function(){
         var writer = new draw2d.io.json.Writer();
         writer.marshal(this.canvas, function(designJson){
@@ -51,28 +70,10 @@ Ext.define('testFunc.view.design.DesignViewController', {
         });
     },
 
-    initCanvas: function(){
-    	this.canvas = new draw2d.CustomCanvas("gfx_holder");
-
-        this.canvas.installEditPolicy(new draw2d.policy.canvas.ExtendedKeyboardPolicy());
-    	this.canvas.installEditPolicy(new draw2d.policy.canvas.CustomFadeoutDecorationPolicy());
-        //this.canvas.installEditPolicy(new draw2d.policy.canvas.CustomSingleSelectionPolicy);
-        this.canvas.installEditPolicy(new draw2d.policy.connection.CustomConnectionCreatePolicy());
-    },
-
-    initSlider: function(){
-        var me = this;
-        $('#zoomSlider').slider({
-            orientation: 'vertical',
-            min: 0.1,
-            max: 5,
-            value: 1,
-            step: 0.1,
-            slide: function(event, ui){
-                me.canvas.setZoom(ui.value, true);
-                //console.log("Set zoom factor: " + ui.value);
-            }
-        });
+    onConnStyleMenuClick: function(menu, item){
+        if(item)
+        {
+            this.canvas.updateConnectionRouter(item.value);
+        }
     }
-
 });

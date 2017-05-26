@@ -28,10 +28,25 @@ Ext.define('testFunc.view.design.Design', {
                         xtype: 'tbfill'
                     },
                     {
+                        xtype: 'button',
+                        text: 'Style',
+                        menu: new Ext.menu.Menu({
+                            items: [
+                                {xtype: 'menucheckitem', group: 'connStyle', text: 'Spline', value: 'spline', checked: true},
+                                {xtype: 'menucheckitem', group: 'connStyle', text: 'Direct', value: 'direct'},
+                                {xtype: 'menucheckitem', group: 'connStyle', text: 'Circuit', value: 'circuit'}
+                            ],
+                            listeners: {
+                                click: 'onConnStyleMenuClick'
+                            }
+                        })
+                    },
+                    {
                         xtype: 'splitbutton',
                         text: 'Save',
                         handler: 'onSaveClick',
                         menu: new Ext.menu.Menu({
+                            plain: true,
                             items: [
                                 // these will render as dropdown menu items when the arrow is clicked:
                                 {text: 'Menu Item 1', handler: function(){ Ext.Msg.alert('alert', "Item 1 was clicked"); }},

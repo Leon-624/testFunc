@@ -22,9 +22,26 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
      */
 	init: function(id){
 		this._super(id);
+
 		this.layerRecs = [];	//array of LayerRectangles
 		this.nodeCirs = [];		//array of NodeCircles
 		this.util = new myDraw2d.Util();
+
+		this.defaultWeight = 1;	//default weight for connection
+		this.defaultRouter = 'spline';
+		this.customConnCreatePolicy = null;	//initialize in initPolicies()
+		this.initPolicies();
+	},
+
+	/**
+     * @method
+     */
+	initPolicies: function(){
+		this.installEditPolicy(new draw2d.policy.canvas.ExtendedKeyboardPolicy());
+    	this.installEditPolicy(new draw2d.policy.canvas.CustomFadeoutDecorationPolicy());
+    	this.customConnCreatePolicy = new draw2d.policy.connection.CustomConnectionCreatePolicy
+    											(this.defaultWeight, this.defaultRouter);
+        this.installEditPolicy(this.customConnCreatePolicy);
 	},
 
 	/**
@@ -93,8 +110,8 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
      * @override
      * override onDrop for dropping elements from outside div
      * onDrop has two more parameters uiX, uiY as I modified the original draw2d.js 
-     * @param {number} cursorX, cursorY position of cursor
-     * @param {number} uiX, uiY position of ui element
+     * @param {Number} cursorX, cursorY position of cursor
+     * @param {Number} uiX, uiY position of ui element
      */
 	onDrop: function(droppedDomNode, cursorX, cursorY, uiX, uiY){
 		var shape = $(droppedDomNode).data('shape');
@@ -138,6 +155,33 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
 		{
 			console.log("Shape is not correct.");
 		}
+	},
+
+	/**
+     * @method
+     * change default router and update every connection
+     * @param {String} router 'direct', 'spline', 'circuit'
+     */
+	updateConnectionRouter: function(router){
+		//update customConnCreatePolicy
+		this.uninstallEditPolicy(this.customConnCreatePolicy);
+		this.defaultRouter = router;
+		this.customConnCreatePolicy = new draw2d.policy.connection.CustomConnectionCreatePolicy
+    											(this.defaultWeight, this.defaultRouter);
+		this.installEditPolicy(this.customConnCreatePolicy);
+		//update every connection
+		var routerObj = null;
+		if(router === 'spline')
+			routerObj = new draw2d.layout.connection.SplineConnectionRouter();
+		else if(router === 'direct')
+			routerObj = new draw2d.layout.connection.DirectRouter();
+		else if(router === 'circuit')
+			routerObj = new draw2d.layout.connection.CircuitConnectionRouter();
+		else
+			routerObj = new draw2d.layout.connection.SplineConnectionRouter();
+		this.getLines().each(function(index, value){
+			value.setRouter(routerObj);
+		});
 	}
 });
 
@@ -196,10 +240,17 @@ draw2d.policy.connection.CustomConnectionCreatePolicy = draw2d.policy.connection
 
 	/**
      * @constructor
+     * @param {Number} defaultWeight
+     * @param {String} defaultRouter 'direct', 'spline', 'circuit'
      */
-	init: function(){
+	init: function(defaultWeight, defaultRouter){
 		this._super([
 			new draw2d.policy.connection.DragConnectionCreatePolicy({
+    			createConnection: function(){
+    				return new draw2d.CustomConnection(defaultWeight, defaultRouter);
+    			}
+    		})
+    		/*new draw2d.policy.connection.ClickConnectionCreatePolicy({
     			createConnection: function(){
     				var connection = new draw2d.Connection({
     					stroke: 3,
@@ -210,52 +261,100 @@ draw2d.policy.connection.CustomConnectionCreatePolicy = draw2d.policy.connection
     				});
     				return connection;
     			}
-    		}),
-    		new draw2d.policy.connection.ClickConnectionCreatePolicy({
-    			/*createConnection: function(){
-    				var connection = new draw2d.Connection({
-    					stroke: 3,
-    					outlineStroke: 1,
-    					outlineColor: '#303030',
-    					color: '91B93E',
-    					router: new draw2d.layout.connection.SplineConnectionRouter()
-    				});
-    				return connection;
-    			}*/
-    		})
+    		})*/
 		]);
 	}
 });
 
 
-/**
- * @class draw2d.policy.canvas.CustomSingleSelectionPolicy
- * @author  Liyan Xu
- * @extends draw2d.policy.canvas.SingleSelectionPolicy
- */
-draw2d.policy.canvas.CustomSingleSelectionPolicy = draw2d.policy.canvas.SingleSelectionPolicy.extend({
 
-	NAME: "draw2d.policy.canvas.CustomSingleSelectionPolicy",
+/**
+ * @class draw2d.decoration.connection.CustomArrowDecorator
+ * @author  Liyan Xu
+ * @extends draw2d.decoration.connection.ArrowDecorator
+ */
+draw2d.decoration.connection.CustomArrowDecorator = draw2d.decoration.connection.ArrowDecorator.extend({
+
+	NAME: "draw2d.decoration.connection.CustomArrowDecorator",
 
 	/**
      * @constructor
+     * @param OPTIONAL {Number} width, height
      */
-	init: function(){
-		this._super();
-	},
+    init: function(width, height){
+    	if(!width)
+    	{
+    		width = 8;
+    		height = 10;
+    	}
+    	else if(!height)
+    		height = 8;
+		this._super(width, height);
+		this.setBackgroundColor("#3f72bf");
+     }
+});
+
+
+/**
+ * @class draw2d.decoration.connection.CustomCircleDecorator
+ * @author  Liyan Xu
+ * @extends draw2d.decoration.connection.CircleDecorator
+ */
+draw2d.decoration.connection.CustomCircleDecorator = draw2d.decoration.connection.CircleDecorator.extend({
+
+	NAME: "draw2d.decoration.connection.CustomCircleDecorator",
 
 	/**
-     * @override
-     * override onClick to bring the clicked figure to the front
+     * @constructor
+     * @param OPTIONAL {Number} width
      */
-	onClick: function(figureClicked, mouseX, mouseY, shiftKey, ctrlKey){
-		if(figureClicked != null && figureClicked.name == 'LayerRectangle')
-		{
-			figureClicked.toBack();
-		}
-			
+    init: function(width){
+    	if(!width)
+    		width = 8;
+		this._super(width);
+		this.setBackgroundColor("#3f72bf");
+     }
+});
+
+
+/**
+ * @class draw2d.CustomConnection
+ * @author  Liyan Xu
+ * @extends draw2d.Connection
+ */
+draw2d.CustomConnection = draw2d.Connection.extend({
+
+	NAME: "draw2d.CustomConnection",
+
+	/**
+     * @constructor
+     * @param {Number} defaultWeight
+     * @param {String} defaultRouter 'direct', 'spline', 'circuit'
+     */
+	init: function(defaultWeight, defaultRouter){
+		var stroke = defaultWeight,
+			router = null;
+		if(defaultRouter === 'spline')
+			router = new draw2d.layout.connection.SplineConnectionRouter();
+		else if(defaultRouter === 'direct')
+			router = new draw2d.layout.connection.DirectRouter();
+		else if(defaultRouter === 'circuit')
+			router = new draw2d.layout.connection.CircuitConnectionRouter();
+		else
+			router = new draw2d.layout.connection.SplineConnectionRouter();
+		this._super({
+			stroke: stroke,
+			sourceDecorator: new draw2d.decoration.connection.CustomCircleDecorator(),
+			targetDecorator: new draw2d.decoration.connection.CustomArrowDecorator(),
+    		//outlineStroke: 1,
+    		//outlineColor: '#303030',
+    		//color: '91B93E',
+    		glow: true,
+    		router: router
+		});
 	}
 });
+
 
 
 /**
@@ -447,7 +546,7 @@ draw2d.shape.basic.LayerRectangle = draw2d.shape.basic.Rectangle.extend({
 	/**
      * @method
      * @param {Number} x
-     * @param {number} y
+     * @param {Number} y
      * @returns {boolean} true if the point is inside this LayerRectangle
      */
 	ifPointInside: function(x, y){
@@ -825,6 +924,7 @@ draw2d.shape.basic.NodeCircle = draw2d.shape.basic.Circle.extend({
 });
 
 
+
 /**
  * @class myDraw2d.Util
  * @author  Liyan Xu
@@ -1058,7 +1158,7 @@ myDraw2d.Util = Class.extend({
 	/**
      * @method
      * @param {Number} x1, y1 position of first point
-     * @param {number} x2, y2 position of second point
+     * @param {Number} x2, y2 position of second point
      * @returns {Number} the distance between two points
      */
 	getDistance: function(x1, y1, x2, y2){
@@ -1093,7 +1193,7 @@ myDraw2d.shapeDesc.LayerRectangle = Class.extend({
 	/**
      * @method
      * @param {Number} x
-     * @param {number} y
+     * @param {Number} y
      * @returns {boolean} true if the point is inside this LayerRectangle
      */
 	ifPointInside: function(x, y){
