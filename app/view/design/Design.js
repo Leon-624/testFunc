@@ -44,7 +44,7 @@ Ext.define('testFunc.view.design.Design', {
                     {
                         xtype: 'splitbutton',
                         text: 'Save',
-                        handler: 'onSaveClick',
+                        handler: 'onDesignSave',
                         menu: new Ext.menu.Menu({
                             plain: true,
                             items: [
@@ -108,13 +108,19 @@ Ext.define('testFunc.view.design.Design', {
                         title: 'Configuration',
                         items: [
                             {
-                                xtype: 'textfield',
+                                xtype: 'numberfield',
+                                reference: 'weightNumberfield',
                                 fieldLabel: 'Weight',
                                 name: 'connWeight',
-                                allowBlank: true
+                                allowBlank: false,
+                                hideTrigger: true,
+                                keyNavEnabled: false,
+                                mouseWheelEnabled: false,
+                                disabled: true
                             },
                             {
                                 xtype: 'checkbox',
+                                reference: 'labelCheckbox',
                                 fieldLabel: 'Label',
                                 name: 'connLabel',
                                 checked: true
@@ -124,11 +130,13 @@ Ext.define('testFunc.view.design.Design', {
                             {
                                 text: 'Save',
                                 formBind: true,
+                                disabled: true,
                                 handler: 'onConfigSave'
                             }
                         ],
                         listeners: {
-                            fromCanvas: 'fromCanvasEventHandler'
+                            afterrender: 'onConfigPanelAfterRender',
+                            fromCanvas: 'fromCanvasEventHandler'    //receive events from canvas
                         }
                     }
                 ]

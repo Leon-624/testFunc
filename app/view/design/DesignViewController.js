@@ -7,6 +7,12 @@ Ext.define('testFunc.view.design.DesignViewController', {
     	//console.log("Design ViewController onAfterRender Fired");
     },
 
+    onConfigPanelAfterRender: function(configPanel){
+        this.configPanel = configPanel;
+        this.weightNumberfield = this.lookupReference('weightNumberfield');
+        this.labelCheckbox = this.lookupReference('labelCheckbox');
+    },
+
     onPalettesLoad: function(){
         //console.log("onPalettesLoad Fired");
         this.initCanvas();
@@ -15,7 +21,8 @@ Ext.define('testFunc.view.design.DesignViewController', {
 
     initCanvas: function(){
         this.canvas = new draw2d.CustomCanvas("gfx_holder");
-        this.canvas.setConfigPanel(this.lookupReference('configPanel'));
+        //this.configPanel is assigned because onConfigPanelAfterRender fires before initCanvas
+        this.canvas.setConfigPanel(this.configPanel);
     },
 
     initSlider: function(){
@@ -33,7 +40,7 @@ Ext.define('testFunc.view.design.DesignViewController', {
         });
     },
 
-    onSaveClick: function(){
+    onDesignSave: function(){
         var writer = new draw2d.io.json.Writer();
         writer.marshal(this.canvas, function(designJson){
             var jsonToPost = {
@@ -78,11 +85,24 @@ Ext.define('testFunc.view.design.DesignViewController', {
         }
     },
 
-    onConfigSave: function(){
-        this.canvas.fireEvent('fromConfigPanel');
+    onConfigSave: function(button){
+        this.canvas.fireEvent('fromConfigPanel', {
+            type: 'setWeight',
+            weight: this.weightNumberfield.getValue()
+        });
     },
 
+    //handle events from canvas
     fromCanvasEventHandler: function(eventObj){
-        console.log("fromCanvasEventHandler Fired");
+        if(eventObj.type === 'selectConnection')
+        {
+            this.weightNumberfield.enable();
+            this.weightNumberfield.setValue(eventObj.weight);
+        }
+        else
+        {
+            this.weightNumberfield.reset();
+            this.weightNumberfield.disable();
+        }
     }
 });
