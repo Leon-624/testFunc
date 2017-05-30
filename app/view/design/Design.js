@@ -85,12 +85,53 @@ Ext.define('testFunc.view.design.Design', {
                     + '<div id="zoomSlider" style="height:150px; position:absolute; top:30px; left:30px; z-index:26000"></div>'
     		},
             {
-                xtype: 'component',
-                width: 200,
-                style: {
+                xtype: 'panel',
+                width: 300,
+                /*style: {
                     backgroundColor: '#b0e0e6'
-                },
-                html: 'Panel'
+                },*/
+                layout: 'anchor',
+                //title: 'Design Panel',
+                items: [
+                    {
+                        xtype: 'panel',
+                        reference: 'messagePanel',
+                        anchor: '100%',
+                        title: 'Messages',
+                        html: 'fadskfbasdk'
+                    },
+                    {
+                        xtype: 'form',
+                        reference: 'configPanel',
+                        bodyPadding: 5,
+                        anchor: '100%',
+                        title: 'Configuration',
+                        items: [
+                            {
+                                xtype: 'textfield',
+                                fieldLabel: 'Weight',
+                                name: 'connWeight',
+                                allowBlank: true
+                            },
+                            {
+                                xtype: 'checkbox',
+                                fieldLabel: 'Label',
+                                name: 'connLabel',
+                                checked: true
+                            }
+                        ],
+                        buttons: [
+                            {
+                                text: 'Save',
+                                formBind: true,
+                                handler: 'onConfigSave'
+                            }
+                        ],
+                        listeners: {
+                            fromCanvas: 'fromCanvasEventHandler'
+                        }
+                    }
+                ]
             }
     	];
 

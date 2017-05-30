@@ -15,6 +15,7 @@ Ext.define('testFunc.view.design.DesignViewController', {
 
     initCanvas: function(){
         this.canvas = new draw2d.CustomCanvas("gfx_holder");
+        this.canvas.setConfigPanel(this.lookupReference('configPanel'));
     },
 
     initSlider: function(){
@@ -75,5 +76,13 @@ Ext.define('testFunc.view.design.DesignViewController', {
         {
             this.canvas.updateConnectionRouter(item.value);
         }
+    },
+
+    onConfigSave: function(){
+        this.canvas.fireEvent('fromConfigPanel');
+    },
+
+    fromCanvasEventHandler: function(eventObj){
+        console.log("fromCanvasEventHandler Fired");
     }
 });

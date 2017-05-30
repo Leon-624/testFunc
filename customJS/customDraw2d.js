@@ -23,14 +23,16 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
 	init: function(id){
 		this._super(id);
 
-		this.layerRecs = [];	//array of LayerRectangles
-		this.nodeCirs = [];		//array of NodeCircles
+		this.layerRecs = [];				//array of LayerRectangles
+		this.nodeCirs = [];					//array of NodeCircles
 		this.util = new myDraw2d.Util();
 
-		this.defaultWeight = 1;	//default weight for connection
+		this.defaultWeight = 1;				//default weight for connection
 		this.defaultRouter = 'spline';
 		this.customConnCreatePolicy = null;	//initialize in initPolicies()
+		this.configPanel = null;			//initialize by calling setConfigPanel from outside
 		this.initPolicies();
+		this.initEventHandlers();
 	},
 
 	/**
@@ -42,6 +44,28 @@ draw2d.CustomCanvas = draw2d.Canvas.extend({
     	this.customConnCreatePolicy = new draw2d.policy.connection.CustomConnectionCreatePolicy
     											(this.defaultWeight, this.defaultRouter);
         this.installEditPolicy(this.customConnCreatePolicy);
+	},
+
+	initEventHandlers: function(){
+		var me = this;
+		this.on("toConfigPanel", function(eventObj){
+			me.configPanel.fireEvent("fromCanvas", null);
+		});
+		this.on("fromConfigPanel", me._fromConfigPanelEventHandler);
+
+		this.on("select", function(emitter, event){
+			if(event.figure!==null){
+         		me.fireEvent("toConfigPanel", null);
+     		}
+		});
+	},
+
+	_fromConfigPanelEventHandler: function(eventObj){
+		console.log('fromOutsideEventHandler Fired');
+	},
+
+	setConfigPanel: function(obj){
+		this.configPanel = obj;
 	},
 
 	/**

@@ -1,3 +1,6 @@
+//global variable
+var globalContext = null;
+
 /**
  * The main application class. An instance of this class is created by app.js when it
  * calls Ext.application(). This is the ideal place to handle application launch and
@@ -22,10 +25,15 @@ Ext.define('testFunc.Application', {
     ],*/
     requires: [
         'testFunc.view.design.Design',
-        'testFunc.view.design.DesignViewController'
+        'testFunc.view.design.DesignViewController',
+        'testFunc.util.GlobalContext',
+        'testFunc.util.design.Design'
     ],
     
     launch: function () {
+        //set globalContext
+        globalContext = new testFunc.util.GlobalContext();
+
         Ext.create('Ext.container.Viewport', {
             //layout: 'vbox',
             autoScroll: true,
