@@ -37,6 +37,7 @@ Ext.define('testFunc.Application', {
         Ext.create('Ext.container.Viewport', {
             //layout: 'vbox',
             autoScroll: true,
+            layout: 'anchor',
             items: [
                 /*{
                     xtype: 'panel',
@@ -55,7 +56,8 @@ Ext.define('testFunc.Application', {
                     ]
                 },*/
                 {
-                    xtype: 'design'
+                    xtype: 'design',
+                    anchor: '100% 100%'
                 },
                 /*{
                     xtype: 'pie3d'

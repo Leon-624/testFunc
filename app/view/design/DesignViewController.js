@@ -7,6 +7,15 @@ Ext.define('testFunc.view.design.DesignViewController', {
     	//console.log("Design ViewController onAfterRender Fired");
     },
 
+    onResize: function(){
+        //console.log("resize");
+    },
+
+    onMsgPanelAfterRender: function(msgPanel){
+        this.msgPanel = msgPanel;
+        this.msg = "";
+    },
+
     onConfigPanelAfterRender: function(configPanel){
         this.configPanel = configPanel;
         this.weightNumberfield = this.lookupReference('weightNumberfield');
@@ -23,6 +32,7 @@ Ext.define('testFunc.view.design.DesignViewController', {
         this.canvas = new draw2d.CustomCanvas("gfx_holder");
         //this.configPanel is assigned because onConfigPanelAfterRender fires before initCanvas
         this.canvas.setConfigPanel(this.configPanel);
+        this.canvas.setMsgPanel(this.msgPanel);
     },
 
     initSlider: function(){
@@ -92,8 +102,22 @@ Ext.define('testFunc.view.design.DesignViewController', {
         });
     },
 
-    //handle events from canvas
-    fromCanvasEventHandler: function(eventObj){
+    //handle msg events from canvas
+    canvasMsgEventHandler: function(eventObj){
+        if(eventObj.type === 'canvasMsg')
+        {
+            this.msg += ("<li>" + eventObj.msg + "</li>");
+            this.msgPanel.setHtml("<ul type='disc'>" + this.msg + "</ul>");
+            this.msgPanel.scrollBy(0, 999999);  //always scroll to the bottom
+        }
+        else
+        {
+            console.log("canvasMsgEventHandler fired; unknown event type");
+        }
+    },
+
+    //handle select events from canvas
+    canvasSelectEventHandler: function(eventObj){
         if(eventObj.type === 'selectConnection')
         {
             this.weightNumberfield.enable();

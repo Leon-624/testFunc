@@ -6,8 +6,8 @@ Ext.define('testFunc.view.design.Design', {
     controller: 'design',
 
     layout: 'hbox',
-    width: '100%',
-    //height: '100%',
+    //width and height determined by anchor in Application.js
+
     title: 'Design (try connecting ports of entities by drag-drop or click-click?)',
 
     initComponent: function(){
@@ -78,15 +78,15 @@ Ext.define('testFunc.view.design.Design', {
     		{
     			xtype: 'component',
                 flex: 1,
-                height: $(document).height() - 100,
-                //height: '600px',
-    			autoScroll: true,
+                height: '100%',
+    			scrollable: true,
     			html: '<div id="gfx_holder" class="ui-droppable" style="width:10000px; height:10000px; background-color:#eff5ff;"></div>'
                     + '<div id="zoomSlider" style="height:150px; position:absolute; top:30px; left:30px; z-index:26000"></div>'
     		},
             {
                 xtype: 'panel',
                 width: 300,
+                height: '100%',
                 /*style: {
                     backgroundColor: '#b0e0e6'
                 },*/
@@ -96,9 +96,14 @@ Ext.define('testFunc.view.design.Design', {
                     {
                         xtype: 'panel',
                         reference: 'messagePanel',
-                        anchor: '100%',
+                        anchor: '100% 40%',
+                        scrollable: true,
                         title: 'Messages',
-                        html: 'fadskfbasdk'
+                        html: '<h3>&nbsp&nbsp&nbsp&nbsp&nbspWelcome!</h3>',
+                        listeners: {
+                            afterrender: 'onMsgPanelAfterRender',
+                            canvasMsg: 'canvasMsgEventHandler'
+                        }
                     },
                     {
                         xtype: 'form',
@@ -136,7 +141,7 @@ Ext.define('testFunc.view.design.Design', {
                         ],
                         listeners: {
                             afterrender: 'onConfigPanelAfterRender',
-                            fromCanvas: 'fromCanvasEventHandler'    //receive events from canvas
+                            canvasSelect: 'canvasSelectEventHandler'    //receive events from canvas
                         }
                     }
                 ]
@@ -147,7 +152,8 @@ Ext.define('testFunc.view.design.Design', {
     },
 
     listeners: {
-    	afterrender: 'onAfterRender'
+    	afterrender: 'onAfterRender',
+        resize: 'onResize'
     }
 
 });
