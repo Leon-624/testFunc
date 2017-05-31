@@ -87,6 +87,7 @@ Ext.define('testFunc.view.design.Design', {
                 xtype: 'panel',
                 width: 300,
                 height: '100%',
+                scrollable: true,
                 /*style: {
                     backgroundColor: '#b0e0e6'
                 },*/
@@ -128,7 +129,8 @@ Ext.define('testFunc.view.design.Design', {
                                 reference: 'labelCheckbox',
                                 fieldLabel: 'Label',
                                 name: 'connLabel',
-                                checked: true
+                                checked: false,
+                                disabled: true
                             }
                         ],
                         buttons: [

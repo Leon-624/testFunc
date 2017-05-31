@@ -97,8 +97,9 @@ Ext.define('testFunc.view.design.DesignViewController', {
 
     onConfigSave: function(button){
         this.canvas.fireEvent('fromConfigPanel', {
-            type: 'setWeight',
-            weight: this.weightNumberfield.getValue()
+            type: 'setConn',
+            weight: this.weightNumberfield.getValue(),
+            labelOn: this.labelCheckbox.getValue()
         });
     },
 
@@ -122,11 +123,14 @@ Ext.define('testFunc.view.design.DesignViewController', {
         {
             this.weightNumberfield.enable();
             this.weightNumberfield.setValue(eventObj.weight);
+            this.labelCheckbox.enable();
+            this.labelCheckbox.setValue(eventObj.labelOn);
         }
         else
         {
             this.weightNumberfield.reset();
             this.weightNumberfield.disable();
+            this.labelCheckbox.disable();
         }
     }
 });
