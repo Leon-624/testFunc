@@ -16,26 +16,37 @@ Ext.define('testFunc.view.design.DesignViewController', {
         this.msg = "";
     },
 
-    onConfigPanelAfterRender: function(configPanel){
-        this.configPanel = configPanel;
-        this.weightNumberfield = this.lookupReference('weightNumberfield');
-        this.labelCheckbox = this.lookupReference('labelCheckbox');
+    //not the default active tab; fires after selecting global config tab, after onPalettesLoad
+    onGlobalConfigAfterRender: function(globalConfigPanel){
+        this.globalConfigPanel = globalConfigPanel;
+        this.defaultWeightNumberfield = this.lookupReference('defaultWeightNumberfield');
+        this.canvas.setGlobalConfigPanel(this.globalConfigPanel);
     },
 
+    //default active tab; fires before onPalettesLoad
+    onSelectedConfigAfterRender: function(selectedConfigPanel){
+        this.selectedConfigPanel = selectedConfigPanel;
+        this.weightNumberfield = this.lookupReference('weightNumberfield');
+        this.labelCheckbox = this.lookupReference('labelCheckbox');
+        this.hiddenTextfield = this.lookupReference('hiddenTextfield');
+    },
+
+    //fires after onSelectedConfigAfterRender, before onGlobalConfigAfterRender
     onPalettesLoad: function(){
         //console.log("onPalettesLoad Fired");
         this.initCanvas();
-        this.initSlider();
+        //this.initSlider();
     },
 
     initCanvas: function(){
         this.canvas = new draw2d.CustomCanvas("gfx_holder");
-        //this.configPanel is assigned because onConfigPanelAfterRender fires before initCanvas
-        this.canvas.setConfigPanel(this.configPanel);
+        //this.configPanel is initialized because onConfigPanelAfterRender fires before initCanvas
+        this.canvas.setSelectedConfigPanel(this.selectedConfigPanel);
         this.canvas.setMsgPanel(this.msgPanel);
     },
 
-    initSlider: function(){
+    //JQuery-UI slider
+    /*initSlider: function(){
         var me = this;
         $('#zoomSlider').slider({
             orientation: 'vertical',
@@ -48,6 +59,10 @@ Ext.define('testFunc.view.design.DesignViewController', {
                 //console.log("Set zoom factor: " + ui.value);
             }
         });
+    },*/
+
+    onZoomSliderChange: function(slider, newValue){
+        this.canvas.setZoom(newValue/10, true);
     },
 
     onDesignSave: function(){
@@ -95,8 +110,8 @@ Ext.define('testFunc.view.design.DesignViewController', {
         }
     },
 
-    onConfigSave: function(button){
-        this.canvas.fireEvent('fromConfigPanel', {
+    onSelectedConfigSave: function(button){
+        this.canvas.fireEvent('fromSelectedConfigPanel', {
             type: 'setConn',
             weight: this.weightNumberfield.getValue(),
             labelOn: this.labelCheckbox.getValue()
@@ -125,12 +140,17 @@ Ext.define('testFunc.view.design.DesignViewController', {
             this.weightNumberfield.setValue(eventObj.weight);
             this.labelCheckbox.enable();
             this.labelCheckbox.setValue(eventObj.labelOn);
+            //disable hidden field to disable its validation
+            this.hiddenTextfield.disable();
         }
         else
         {
             this.weightNumberfield.reset();
             this.weightNumberfield.disable();
+            this.labelCheckbox.setValue(false);
             this.labelCheckbox.disable();
+            //enable hidden field to enable its validation
+            this.hiddenTextfield.enable();
         }
     }
 });

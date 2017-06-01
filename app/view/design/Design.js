@@ -28,6 +28,20 @@ Ext.define('testFunc.view.design.Design', {
                         xtype: 'tbfill'
                     },
                     {
+                        xtype: 'slider',
+                        width: 150,
+                        minValue: 1,
+                        maxValue: 50,
+                        value: 10,
+                        increment: 1,
+                        fieldLabel: "Zoom",
+                        labelAlign: 'left',
+                        labelWidth: 40,
+                        listeners: {
+                            change: 'onZoomSliderChange'
+                        }
+                    },
+                    {
                         xtype: 'button',
                         text: 'Style',
                         menu: new Ext.menu.Menu({
@@ -81,7 +95,7 @@ Ext.define('testFunc.view.design.Design', {
                 height: '100%',
     			scrollable: true,
     			html: '<div id="gfx_holder" class="ui-droppable" style="width:10000px; height:10000px; background-color:#eff5ff;"></div>'
-                    + '<div id="zoomSlider" style="height:150px; position:absolute; top:30px; left:30px; z-index:26000"></div>'
+                    //+ '<div id="zoomSlider" style="height:150px; position:absolute; top:30px; left:30px; z-index:26000"></div>'
     		},
             {
                 xtype: 'panel',
@@ -107,44 +121,94 @@ Ext.define('testFunc.view.design.Design', {
                         }
                     },
                     {
-                        xtype: 'form',
-                        reference: 'configPanel',
-                        bodyPadding: 5,
+                        xtype: 'tabpanel',
+                        reference: 'configTabs',
                         anchor: '100%',
-                        title: 'Configuration',
+                        activeTab: 1,
+                        plain: false,
                         items: [
                             {
-                                xtype: 'numberfield',
-                                reference: 'weightNumberfield',
-                                fieldLabel: 'Weight',
-                                name: 'connWeight',
-                                allowBlank: false,
-                                hideTrigger: true,
-                                keyNavEnabled: false,
-                                mouseWheelEnabled: false,
-                                disabled: true
+                                xtype: 'form',
+                                reference: 'globalConfigPanel',
+                                bodyPadding: 10,
+                                title: 'Global',
+                                items: [
+                                    {
+                                        xtype: 'numberfield',
+                                        reference: 'defaultWeightNumberfield',
+                                        fieldLabel: 'Default Weight',
+                                        name: 'connDefaultWeight',
+                                        allowBlank: false,
+                                        hideTrigger: true,
+                                        keyNavEnabled: false,
+                                        mouseWheelEnabled: false,
+                                        disabled: false
+                                    }
+                                ],
+                                buttons: [
+                                    {
+                                        text: 'Save',
+                                        formBind: true,
+                                        handler: 'onGlobalConfigSave'
+                                    }
+                                ],
+                                listeners: {
+                                    afterrender: 'onGlobalConfigAfterRender'
+                                }
                             },
                             {
-                                xtype: 'checkbox',
-                                reference: 'labelCheckbox',
-                                fieldLabel: 'Label',
-                                name: 'connLabel',
-                                checked: false,
-                                disabled: true
+                                xtype: 'form',
+                                reference: 'selectedConfigPanel',
+                                bodyPadding: 10,
+                                title: 'Selected',
+                                items: [
+                                    {
+                                        xtype: 'numberfield',
+                                        reference: 'weightNumberfield',
+                                        fieldLabel: 'Weight',
+                                        name: 'connWeight',
+                                        allowBlank: false,
+                                        hideTrigger: true,
+                                        keyNavEnabled: false,
+                                        mouseWheelEnabled: false,
+                                        disabled: true
+                                    },
+                                    {
+                                        xtype: 'checkbox',
+                                        reference: 'labelCheckbox',
+                                        fieldLabel: 'Label',
+                                        name: 'connLabel',
+                                        checked: false,
+                                        disabled: true
+                                    },
+                                    {
+                                        //add this hidden field to make save button disabled initially & when no conn selected
+                                        xtype: 'textfield',
+                                        reference: 'hiddenTextfield',
+                                        hidden: true,
+                                        name: 'hiddenField',
+                                        allowBlank: false,
+                                        disabled: false
+                                    }
+                                ],
+                                buttons: [
+                                    {
+                                        text: 'Save',
+                                        reference: 'selectedConfigSaveButton',
+                                        //formBind result will override disabled config
+                                        //formBind will prevent button disabled initially, because
+                                        //disabled fields are always treated as valid.
+                                        //to make button disabled initially, add a hidden field for validation
+                                        formBind: true,
+                                        handler: 'onSelectedConfigSave'
+                                    }
+                                ],
+                                listeners: {
+                                    afterrender: 'onSelectedConfigAfterRender',
+                                    canvasSelect: 'canvasSelectEventHandler'    //receive events from canvas
+                                }
                             }
-                        ],
-                        buttons: [
-                            {
-                                text: 'Save',
-                                formBind: true,
-                                disabled: true,
-                                handler: 'onConfigSave'
-                            }
-                        ],
-                        listeners: {
-                            afterrender: 'onConfigPanelAfterRender',
-                            canvasSelect: 'canvasSelectEventHandler'    //receive events from canvas
-                        }
+                        ]
                     }
                 ]
             }

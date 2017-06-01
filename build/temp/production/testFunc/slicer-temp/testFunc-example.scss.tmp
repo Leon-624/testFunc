@@ -1,5 +1,5 @@
 $app-name:  dynamic( 'testFunc' );
-$image-search-path: '/Users/liyanxu/Downloads/ExtJS/testFunc/build/production/testFunc/resources';
+$image-search-path: '/Users/liyanxu/Downloads/apache-tomcat-8.5.12/webapps/testFunc/build/production/testFunc/resources';
 $theme-name:  dynamic( 'theme-triton' );
 $include-ext-abstractcomponent: dynamic(true);;
 $include-ext-abstractcontainer: dynamic(true);;
@@ -1077,6 +1077,8 @@ $include-ext-window-window: dynamic(true);;
 $include-testfunc-application: dynamic(true);;
 $include-testfunc-model-pie3d: dynamic(true);;
 $include-testfunc-model-user: dynamic(true);;
+$include-testfunc-util-globalcontext: dynamic(true);;
+$include-testfunc-util-design-design: dynamic(true);;
 $include-testfunc-view-dd-cartable: dynamic(true);;
 $include-testfunc-view-dd-cartableviewcontroller: dynamic(true);;
 $include-testfunc-view-design-design: dynamic(true);;

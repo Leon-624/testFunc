@@ -102,19 +102,28 @@ c.updatedAssets.push(a)):a.uncache()}catch(h){l("Error parsing delta patch for "
 a.cache()}c.notifyUpdateReady()},notifyUpdateReady:function(){"checking"!==c.appCacheState&&c.updatedAssetsReady&&("updated"===c.appCacheState||c.updatedManifest)&&(c.appUpdate={updated:!0,app:"updated"===c.appCacheState,manifest:c.updatedManifest&&c.updatedManifest.exportContent()},c.fireAppUpdate())},fireAppUpdate:function(){Ext.GlobalEvents&&Ext.defer(function(){Ext.GlobalEvents.fireEvent("appupdate",c.appUpdate)},1E3)},checksum:function(a,c){if(!a||!c)return!1;var b=!0,e=c.length,f=a.substring(0,
 1);"/"==f?a.substring(2,e+2)!==c&&(b=!1):"f"==f?a.substring(10,e+10)!==c&&(b=!1):"."==f&&a.substring(1,e+1)!==c&&(b=!1);return b},parseResult:function(a){var c={};!a.exception&&0!==a.status||f.env.phantom?200<=a.status&&300>a.status||304===a.status||f.env.phantom||0===a.status&&0<a.content.length?c.content=a.content:c.error=!0:c.error=!0;return c}};return c}();Ext.manifest=Ext.manifest||"bootstrap";Ext.Microloader.run();</script>
 
-    <SCRIPT src="./draw2d/lib/jquery-1.12.0.min.js"></SCRIPT>
-    <SCRIPT src="./draw2d/lib/jquery.autoresize.js"></SCRIPT>
-    <SCRIPT src="./draw2d/lib/jquery-touch_punch.js"></SCRIPT>
-    <SCRIPT src="./draw2d/lib/jquery.contextmenu.js"></SCRIPT>
-    <SCRIPT src="./draw2d/lib/shifty.js"></SCRIPT>
-    <SCRIPT src="./draw2d/lib/raphael.js"></SCRIPT>
-    <SCRIPT src="./draw2d/lib/rgbcolor.js"></SCRIPT>
-    <SCRIPT src="./draw2d/lib/canvg.js"></SCRIPT>
-    <SCRIPT src="./draw2d/lib/Class.js"></SCRIPT>
-    <SCRIPT src="./draw2d/lib/json2.js"></SCRIPT>
-    <SCRIPT src="./draw2d/lib/pathfinding-browser.min.js"></SCRIPT>
+    <!--  Draw2D  -->
+    <SCRIPT src="./lib/draw2d/lib/jquery-1.12.0.min.js"></SCRIPT>
+    <SCRIPT src="./lib/draw2d/lib/jquery.autoresize.js"></SCRIPT>
+    <SCRIPT src="./lib/draw2d/lib/jquery-touch_punch.js"></SCRIPT>
+    <SCRIPT src="./lib/draw2d/lib/jquery.contextmenu.min.js"></SCRIPT>
+    <SCRIPT src="./lib/draw2d/lib/shifty.js"></SCRIPT>
+    <SCRIPT src="./lib/draw2d/lib/raphael.min.js"></SCRIPT>
+    <SCRIPT src="./lib/draw2d/lib/rgbcolor.min.js"></SCRIPT>
+    <SCRIPT src="./lib/draw2d/lib/canvg.min.js"></SCRIPT>
+    <SCRIPT src="./lib/draw2d/lib/Class.js"></SCRIPT>
+    <SCRIPT src="./lib/draw2d/lib/json2.min.js"></SCRIPT>
+    <SCRIPT src="./lib/draw2d/lib/pathfinding-browser.min.js"></SCRIPT>
+    <SCRIPT src="./lib/draw2d/src/draw2d.min.js"></SCRIPT>
 
-    <SCRIPT src="./draw2d/src/draw2d.js"></SCRIPT>
+    <!--  jQueryUI  -->
+    <SCRIPT src="./lib/jquery-ui/jquery-ui.min.js"></SCRIPT>
+    <link rel="stylesheet" href="./lib/jquery-ui/jquery-ui.min.css">
+
+    <!--  Custom Draw2D  -->
+    <SCRIPT src="./lib/draw2d/src/customDraw2d.js"></SCRIPT>
+    <link rel="stylesheet" href="./css/customDraw2d.css">
+
 
 </head>
 <body></body>
