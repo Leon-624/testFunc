@@ -4,6 +4,7 @@ Ext.define('testFunc.view.design.Design', {
     alias: 'widget.design',
 
     controller: 'design',
+    //viewModel: 'design',
 
     layout: 'hbox',
     //width and height determined by anchor in Application.js

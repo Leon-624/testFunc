@@ -26,6 +26,7 @@ Ext.define('testFunc.Application', {
     requires: [
         'testFunc.view.design.Design',
         'testFunc.view.design.DesignViewController',
+        'testFunc.view.design.DesignViewModel',
         'testFunc.util.GlobalContext',
         'testFunc.util.design.Design'
     ],
