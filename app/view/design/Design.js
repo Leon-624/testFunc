@@ -4,12 +4,14 @@ Ext.define('testFunc.view.design.Design', {
     alias: 'widget.design',
 
     controller: 'design',
-    //viewModel: 'design',
+    viewModel: 'design',
 
     layout: 'hbox',
     //width and height determined by anchor in Application.js
 
-    title: 'Design (try connecting ports of entities by drag-drop or click-click?)',
+    bind: {
+        title: '{heading}'
+    },
 
     initComponent: function(){
         me = this;
@@ -23,7 +25,9 @@ Ext.define('testFunc.view.design.Design', {
                 items: [
                     {
                         xtype: 'component',
-                        html: 'Design Title'
+                        bind: {
+                            html: '{design.designTitle}'
+                        }
                     },
                     {
                         xtype: 'tbfill'

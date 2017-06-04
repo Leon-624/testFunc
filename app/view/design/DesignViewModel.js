@@ -3,41 +3,24 @@ Ext.define('testFunc.view.design.DesignViewModel', {
 
     alias: 'viewmodel.design',
 
-    constructor: function(config){
-    	console.log("DesignViewModel Constructing");
-    	this.callParent(arguments);
+    data: {
+    	heading: 'Design You Own'
     },
 
-    stores: {
+    links: {
     	design: {
-    		/*constructor: function(){
-    			console.log("Store users Constructed");
-    			this.callParent(arguments);
-    		},*/
-
-    		model: 'testFunc.model.Design',
-    		storeId: 'design',
-			autoLoad: false,
-
-			/*proxy:{
-				type: 'ajax',
-				api: {
-					read: 'http://localhost:8080/testFuncService/rest/users',
-					update: 'http://localhost:8080/testFuncService/rest/users/update',
-					create: 'http://localhost:8080/testFuncService/rest/users/create'
-				},
-				reader: {
-					type: 'json',
-					rootProperty: 'users'
-					//successProperty: 'success'
-				},
-				writer: {
-					type: 'json',
-					writeAllFields: true
-					//rootProperty: 'users',
-					//encode: true
-				}
-			}*/
+    		type: 'testFunc.model.Design',
+    		create: {
+    			designId: -1,
+    			designTitle: 'Untitled Design',
+    			designDescription: "",
+    			designMemento: null,
+    			canvasMemento: null,
+    			designVersion: 0,
+    			designParent: -1,
+    			designTimestamp: -1,
+    			designUserId: null
+    		}
     	}
     }
 

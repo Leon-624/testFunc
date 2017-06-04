@@ -66,7 +66,14 @@ Ext.define('testFunc.view.design.DesignViewController', {
     },
 
     onDesignSave: function(){
-        var writer = new draw2d.io.json.Writer();
+        var saveAgent = Ext.create('testFunc.util.agent.DesignSaveAgent', {
+            canvas: this.canvas,
+            topView: this.getView(),
+            record: this.getViewModel().getData().design
+        });
+        saveAgent.saveDesign();
+
+        /*var writer = new draw2d.io.json.Writer();
         writer.marshal(this.canvas, function(designJson){
             var jsonToPost = {
                 designId: -1,
@@ -100,7 +107,7 @@ Ext.define('testFunc.view.design.DesignViewController', {
                     Ext.Msg.alert('Failed', obj.error);
                 }
             });
-        });
+        });*/
     },
 
     onConnStyleMenuClick: function(menu, item){

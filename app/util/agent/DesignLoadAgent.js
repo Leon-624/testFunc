@@ -1,4 +1,4 @@
-Ext.define('testFunc.util.GlobalContext', {
+Ext.define('testFunc.util.agent.DesignLoadAgent', {
 
 	//all config variable can be accessed by getter and setter, but no direct access
     config: {
@@ -7,7 +7,7 @@ Ext.define('testFunc.util.GlobalContext', {
 
     constructor: function(config){
     	//initialize designContext
-        this.setDesignContext(Ext.create('testFunc.util.context.DesignContext'));
+    	this.config.designContext = Ext.create('testFunc.util.design.Design');
         this.initConfig(config);
         return this;
     }

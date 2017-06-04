@@ -27,8 +27,13 @@ Ext.define('testFunc.Application', {
         'testFunc.view.design.Design',
         'testFunc.view.design.DesignViewController',
         'testFunc.view.design.DesignViewModel',
+        'testFunc.model.Design',
+        'testFunc.view.window.DesignTitle',
+        'testFunc.view.window.DesignTitleViewController',
+        'testFunc.util.agent.DesignSaveAgent',
+        'testFunc.util.agent.DesignLoadAgent',
         'testFunc.util.GlobalContext',
-        'testFunc.util.design.Design'
+        'testFunc.util.context.DesignContext'
     ],
     
     launch: function () {
