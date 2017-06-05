@@ -59,23 +59,14 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
                 designMemento = json;
             });
             //assign values into record
-            //take care of designParent
-            if(record.get('designVersion') == 0)
-            {
-                record.set('designParent', -1);
-            }
-            else
-            {
-                record.set('designParent', record.get('designId'));
-            }
-            //take care of the rest attributes
             record.set({
                 designTitle: this.designContext.getDesignTitle(),
                 designDescription: this.designContext.getDesignDescription(),
                 designMemento: JSON.stringify(designMemento, null, 2),
                 canvasMemento: JSON.stringify(canvasMemento, null, 2),
                 designVersion: record.get('designVersion') + 1,
-                //designParent: already set above
+                designParent: 0,
+                designParent: record.get('designId'),   //also true for initial design
                 designTimestamp: Date.now(),
                 designUserId: 'testid'
             });
@@ -90,7 +81,17 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
                     me.loadMask.hide();
                     me.loadMask.destroy();
                     me.loadMask = null;
-                    Ext.Msg.alert('Success', "Design Saved!");
+                    //Ext.toast('Data saved');
+                    Ext.toast({
+                        html: 'Design Saved',
+                        height: 20,
+                        shadow: true,
+                        slideInDuration: 500,
+                        slideBackDuration: 1000,
+                        bodyStyle: {
+                            background: '#ffe066'
+                        }
+                    });
                 },
                 failure: function(){
                     //unmask topView

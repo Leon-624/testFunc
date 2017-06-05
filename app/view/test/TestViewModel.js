@@ -1,7 +1,7 @@
-Ext.define('testFunc.view.design.DesignViewModel', {
+Ext.define('testFunc.view.test.TestViewModel', {
     extend: 'Ext.app.ViewModel',
 
-    alias: 'viewmodel.design',
+    alias: 'viewmodel.test',
 
     data: {
     	heading: 'Design You Own'
@@ -9,8 +9,8 @@ Ext.define('testFunc.view.design.DesignViewModel', {
 
     links: {
     	design: {
-    		type: 'testFunc.model.DesignDetail',
-    		create: {
+    		type: 'testFunc.model.test',
+    		/*create: {
     			designId: 0,
     			designTitle: 'Untitled Design',
     			designDescription: "",
@@ -20,7 +20,11 @@ Ext.define('testFunc.view.design.DesignViewModel', {
     			designParent: 0,
     			designTimestamp: 0,
     			designUserId: null
-    		}
+    		}*/
+            create: {
+                designId: 0,
+                designTitle: 'Untitled Design',
+            }
     	}
     }
 

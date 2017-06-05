@@ -117,6 +117,7 @@ Ext.define('testFunc.view.design.Design', {
                         xtype: 'panel',
                         reference: 'messagePanel',
                         anchor: '100% 40%',
+                        padding: '5, 5, 5, 5',
                         scrollable: true,
                         title: 'Messages',
                         html: '<h3>&nbsp&nbsp&nbsp&nbsp&nbspWelcome!</h3>',
@@ -165,7 +166,7 @@ Ext.define('testFunc.view.design.Design', {
                                 xtype: 'form',
                                 reference: 'selectedConfigPanel',
                                 bodyPadding: 10,
-                                title: 'Selected',
+                                title: 'Local',
                                 items: [
                                     {
                                         xtype: 'numberfield',

@@ -1,4 +1,4 @@
-Ext.define('testFunc.model.Design', {
+Ext.define('testFunc.model.DesignDetail', {
 	extend: 'Ext.data.Model',
 
 	fields: [

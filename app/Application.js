@@ -17,23 +17,21 @@ Ext.define('testFunc.Application', {
     /*stores:[
         "Users"
     ],*/
-    /*requires: [
-        "testFunc.view.user.UserForm",
-        'testFunc.view.user.UserList',
-        'testFunc.view.dd.CarTable',
-        'testFunc.model.User'
-    ],*/
     requires: [
         'testFunc.view.design.Design',
         'testFunc.view.design.DesignViewController',
         'testFunc.view.design.DesignViewModel',
-        'testFunc.model.Design',
+        'testFunc.model.DesignDetail',
         'testFunc.view.window.DesignTitle',
         'testFunc.view.window.DesignTitleViewController',
         'testFunc.util.agent.DesignSaveAgent',
         'testFunc.util.agent.DesignLoadAgent',
         'testFunc.util.GlobalContext',
         'testFunc.util.context.DesignContext'
+        //'testFunc.view.test.Test',
+        //'testFunc.view.test.TestViewModel',
+        //'testFunc.model.Test',
+        //'testFunc.view.test.TestViewController',
     ],
     
     launch: function () {
@@ -61,10 +59,14 @@ Ext.define('testFunc.Application', {
                         }
                     ]
                 },*/
+                /*{
+                    xtype: 'test',
+                    anchor: '100% 100%'
+                },*/
                 {
                     xtype: 'design',
                     anchor: '100% 100%'
-                },
+                }
                 /*{
                     xtype: 'pie3d'
                 }*/

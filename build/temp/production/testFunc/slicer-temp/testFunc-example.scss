@@ -1075,17 +1075,25 @@ $include-ext-window-messagebox: dynamic(true);;
 $include-ext-window-toast: dynamic(true);;
 $include-ext-window-window: dynamic(true);;
 $include-testfunc-application: dynamic(true);;
+$include-testfunc-model-design: dynamic(true);;
+$include-testfunc-model-designdetail: dynamic(true);;
 $include-testfunc-model-pie3d: dynamic(true);;
 $include-testfunc-model-user: dynamic(true);;
 $include-testfunc-util-globalcontext: dynamic(true);;
-$include-testfunc-util-design-design: dynamic(true);;
+$include-testfunc-util-agent-designloadagent: dynamic(true);;
+$include-testfunc-util-agent-designsaveagent: dynamic(true);;
+$include-testfunc-util-context-designcontext: dynamic(true);;
 $include-testfunc-view-dd-cartable: dynamic(true);;
 $include-testfunc-view-dd-cartableviewcontroller: dynamic(true);;
 $include-testfunc-view-design-design: dynamic(true);;
 $include-testfunc-view-design-designviewcontroller: dynamic(true);;
+$include-testfunc-view-design-designviewmodel: dynamic(true);;
 $include-testfunc-view-pie-pie3d: dynamic(true);;
 $include-testfunc-view-pie-pie3dviewcontroller: dynamic(true);;
 $include-testfunc-view-pie-pie3dviewmodel: dynamic(true);;
+$include-testfunc-view-test-test: dynamic(true);;
+$include-testfunc-view-test-testviewcontroller: dynamic(true);;
+$include-testfunc-view-test-testviewmodel: dynamic(true);;
 $include-testfunc-view-user-useredit: dynamic(true);;
 $include-testfunc-view-user-usereditviewcontroller: dynamic(true);;
 $include-testfunc-view-user-userform: dynamic(true);;
@@ -1093,6 +1101,8 @@ $include-testfunc-view-user-userformviewcontroller: dynamic(true);;
 $include-testfunc-view-user-userlist: dynamic(true);;
 $include-testfunc-view-user-userlistviewcontroller: dynamic(true);;
 $include-testfunc-view-user-userlistviewmodel: dynamic(true);;
+$include-testfunc-view-window-designtitle: dynamic(true);;
+$include-testfunc-view-window-designtitleviewcontroller: dynamic(true);;
 
 
 /* ======================== ETC ======================== */
