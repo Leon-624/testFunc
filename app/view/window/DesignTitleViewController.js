@@ -7,24 +7,52 @@ Ext.define("testFunc.view.window.DesignTitleViewController", {
 		this.designTitleTextfield = this.lookupReference('designTitleTextfield');
 		this.topView = this.getView().getTopView();
 		this.callback = this.getView().getCallback();
+		this.serverResponse = null;
+		this.loadMask = null;
 	},
 
+	//upon clicking save, call onSaveClick -> ifTitleValid -> onSaveClickCont
 	onSaveClick: function(){
+		var me = this;
+		//show loadMask
+		this.loadMask = new Ext.LoadMask({
+			msg: 'One second...',
+			target: me.getView()
+		});
+		this.loadMask.show();
+		//examine title
 		var title = this.designTitleTextfield.getValue();
-		//title is unique, save title to global designContext and call back
-		if(this.ifTitleValid(title))
+		this.ifTitleValid(title);
+	},
+
+	onSaveClickCont: function(){
+		//destroy loadMask
+		this.loadMask.hide();
+		this.loadMask.destroy();
+		this.loadMask = null;
+		//server responses 200
+		if(this.serverResponse.success)
 		{
-			globalContext.getDesignContext().setDesignTitle(title);
-			if(this.callback)
+			//title is unique, save title to global designContext and call back
+			if(this.serverResponse.unique)
 			{
-				this.callback();
+				globalContext.getDesignContext().setDesignTitle(this.serverResponse.title);
+				if(this.callback)
+				{
+					this.callback();
+				}
+				this.getView().close();
 			}
-			this.getView().close();
+			//title is not unique, display error msg
+			else
+			{
+				this.designTitleTextfield.markInvalid("Design Title Already Exists");
+			}
 		}
-		//title is not unique, display error msg
+		//server responses 500
 		else
 		{
-			this.designTitleTextfield.markInvalid("Design Title Already Exists");
+			this.designTitleTextfield.markInvalid("Something is wrong");
 		}
 	},
 
@@ -41,7 +69,32 @@ Ext.define("testFunc.view.window.DesignTitleViewController", {
 		}
 	},
 
-	ifTitleValid: function(){
-		return true;
+	//set this.serverResponse
+	ifTitleValid: function(title){
+		this.serverResponse = null;
+		var me = this;
+		Ext.Ajax.request({
+			url: 'http://localhost:8080/testFuncService/rest/designs/titletest',
+			method: 'GET',
+			//async: false,	//set as sync call so serverResponse can be set; discouraged
+			params: {
+				title: title
+			},
+			proxy:{
+				reader: {
+					type: 'json',
+					successProperty: 'success'
+				}
+			},
+			success: function(response, opts) {
+				//Ext.decode() takes Json and parses
+				me.serverResponse = Ext.decode(response.responseText);
+				me.onSaveClickCont();
+			},
+			failure: function(response, opts) {
+				me.serverResponse = Ext.decode(response.responseText);
+				me.onSaveClickCont();
+			}
+		});
 	}
 });

@@ -17,6 +17,7 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
     constructor: function(config){
         this.initConfig(config);
         this.designContext = globalContext.getDesignContext();
+        this.loadMask = null;
         return this;
     },
 
@@ -44,6 +45,12 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
         //if not initial design or title is set in global designContext, begin saving process
         else
         {
+            //show loadMask
+            this.loadMask = new Ext.LoadMask({
+                msg: 'Saving...',
+                target: topView
+            });
+            this.loadMask.show();
             //prepare memento
             var canvasMemento = canvas.getPersistentAttributes(),
                 designMemento = null,
@@ -73,15 +80,26 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
                 designUserId: 'testid'
             });
             //set record to phantom to make it call CREATE api defined in model
+            var me = this;
             record.phantom = true;
             record.save({
                 success: function(){
                     //unmask topView
                     topView.unmask();
+                    //destroy loadMask
+                    me.loadMask.hide();
+                    me.loadMask.destroy();
+                    me.loadMask = null;
+                    Ext.Msg.alert('Success', "Design Saved!");
                 },
                 failure: function(){
                     //unmask topView
                     topView.unmask();
+                    //destroy loadMask
+                    me.loadMask.hide();
+                    me.loadMask.destroy();
+                    me.loadMask = null;
+                    Ext.Msg.alert('Failure', "Something is wrong...");
                 },
                 //will be called whether the save succeeded or failed
                 callback: function(){

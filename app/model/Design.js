@@ -17,7 +17,7 @@ Ext.define('testFunc.model.Design', {
 	proxy: {
         type: 'ajax',
         api: {
-        	create: 'hehe/create',
+        	create: 'http://localhost:8080/testFuncService/rest/designs/create',
     		read: 'hehe/read',
     		update: 'hehe/update',
     		destroy: 'hehe/destroy'
