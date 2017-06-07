@@ -1,4 +1,4 @@
-Ext.define('testFunc.util.GlobalContext', {
+Ext.define('testFunc.util.context.GlobalContext', {
 
 	//all config variable can be accessed by getter and setter, but no direct access
     config: {

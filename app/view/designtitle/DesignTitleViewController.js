@@ -1,4 +1,4 @@
-Ext.define("testFunc.view.window.DesignTitleViewController", {
+Ext.define("testFunc.view.designtitle.DesignTitleViewController", {
 	extend: 'Ext.app.ViewController',
 
 	alias: 'controller.designtitle',

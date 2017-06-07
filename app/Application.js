@@ -1,18 +1,9 @@
 //global variable
 var globalContext = null;
+var globalEventAgent = null;
 
-Ext.myToast = function(text){
-    Ext.toast({
-        html: text,
-        height: 20,
-        shadow: true,
-        slideInDuration: 500,
-        slideBackDuration: 1000,
-        bodyStyle: {
-            background: '#ffe066'
-        }
-    });
-};
+//global namespace
+var globalUtil = {};
 
 /**
  * The main application class. An instance of this class is created by app.js when it
@@ -35,11 +26,12 @@ Ext.define('testFunc.Application', {
         'testFunc.view.design.DesignViewController',
         'testFunc.view.design.DesignViewModel',
         'testFunc.model.DesignDetail',
-        'testFunc.view.window.DesignTitle',
-        'testFunc.view.window.DesignTitleViewController',
+        'testFunc.view.designtitle.DesignTitle',
+        'testFunc.view.designtitle.DesignTitleViewController',
         'testFunc.util.agent.DesignSaveAgent',
         'testFunc.util.agent.DesignLoadAgent',
-        'testFunc.util.GlobalContext',
+        'testFunc.util.agent.GlobalEventAgent',
+        'testFunc.util.context.GlobalContext',
         'testFunc.util.context.DesignContext'
         //'testFunc.view.test.Test',
         //'testFunc.view.test.TestViewModel',
@@ -92,8 +84,11 @@ Ext.define('testFunc.Application', {
     },
 
     preSetup: function(){
-        //set globalContext
-        globalContext = new testFunc.util.GlobalContext();
+        //set global variables
+        globalContext = new testFunc.util.context.GlobalContext();
+        globalEventAgent = new testFunc.util.agent.GlobalEventAgent();
+        //set globalUtil namespace
+        this._preSetupGlobalUtil();
         //set string hash method
         this._preSetupStringHash();
     },
@@ -110,6 +105,60 @@ Ext.define('testFunc.Application', {
             }
             return hash;
         }
+    },
+
+    _preSetupGlobalUtil: function(){
+        globalUtil.toast = function(text){
+            Ext.toast({
+                html: text,
+                height: 20,
+                shadow: true,
+                slideInDuration: 500,
+                slideBackDuration: 1000,
+                bodyStyle: {
+                    background: '#ffe066'
+                }
+            });
+        };
+
+        //format == 1: mm/dd/yyyy
+        //format == 2: hh:mm
+        //format == 3: mm/dd/yyyy hh:mm
+        globalUtil.convertTsToDate = function(ts, format){
+            var dateObj = new Date(ts),
+                result = '';
+            if(!format)
+                format = 3;
+            if(format != 2)
+            {
+                //set month
+                var month = (dateObj.getMonth() + 1).toString();
+                if(month.length == 1)
+                    month = '0' + month;
+                //set day
+                var day = dateObj.getDate().toString();
+                if(day.length == 1)
+                    day = '0' + day;
+                //set year
+                var year = dateObj.getFullYear().toString();
+                result += (month + '/' + day + '/' + year);
+            }
+            if(format != 1)
+            {
+                if(format == 3)
+                    result += ' ';
+                //set hour
+                var hour = dateObj.getHours().toString();
+                if(hour.length == 1)
+                    hour = '0' + hour;
+                //set minute
+                var minute = dateObj.getMinutes().toString();
+                if(minute.length == 1)
+                    minute = '0' + minute;
+                result += (hour + ':' + minute);
+            }
+            return result;
+        };
     },
 
     onAppUpdate: function () {

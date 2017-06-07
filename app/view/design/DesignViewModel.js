@@ -18,8 +18,8 @@ Ext.define('testFunc.view.design.DesignViewModel', {
     			canvasMemento: null,
     			designVersion: 0,
     			designParent: 0,
-    			designTimestamp: "Unavailable",
-                designCreateTimestamp: "Unavailable (Not Saved)",
+    			designTimestamp: "N/A",
+                designCreateTimestamp: "N/A (Not Saved)",
     			designUserId: null
     		}
     	}

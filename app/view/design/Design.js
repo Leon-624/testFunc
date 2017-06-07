@@ -132,7 +132,7 @@ Ext.define('testFunc.view.design.Design', {
                         html: '<h3>&nbsp&nbsp&nbsp&nbsp&nbspWelcome!</h3>',
                         listeners: {
                             afterrender: 'onMsgPanelAfterRender',
-                            canvasMsg: 'canvasMsgEventHandler'
+                            msg: 'msgEventHandler'
                         }
                     },
                     {

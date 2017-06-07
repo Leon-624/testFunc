@@ -48,7 +48,7 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
             if(!this.designContext.isDesignDirty())
             {
                 topView.unmask();
-                Ext.myToast("Design Not Changed");
+                globalUtil.toast("Design Not Changed");
                 return;
             }
             //show loadMask
@@ -97,7 +97,12 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
                     me.loadMask.destroy();
                     me.loadMask = null;
                     //show toast
-                    Ext.myToast('Design Saved');
+                    globalUtil.toast("Design Saved");
+                    //show msg on msgPanel
+                    globalEventAgent.makeEvent("msgPanel", 'msg', {
+                        type: 'saveAgentMsg',
+                        msg: 'Design saved as version ' + record.get('designVersion') + '.'
+                    });
                 },
                 failure: function(thisRecord, operation){
                     //unmask topView
@@ -108,6 +113,11 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
                     me.loadMask = null;
                     //show alert
                     Ext.Msg.alert('Failure', "Something is wrong...");
+                    //show msg on msgPanel
+                    globalEventAgent.makeEvent("msgPanel", 'msg', {
+                        type: 'saveAgentMsg',
+                        msg: 'Something is wrong trying to save...'
+                    });
                 },
                 //will be called whether the save succeeded or failed
                 callback: function(thisRecord, operation, success){

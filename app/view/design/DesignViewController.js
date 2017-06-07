@@ -14,13 +14,16 @@ Ext.define('testFunc.view.design.DesignViewController', {
     onMsgPanelAfterRender: function(msgPanel){
         this.msgPanel = msgPanel;
         this.msg = "";
+        //register msgPanel to globalEventAgent
+        globalEventAgent.register('msgPanel', this.msgPanel);
     },
 
     //not the default active tab; fires after selecting global config tab, after onPalettesLoad
     onGlobalConfigAfterRender: function(globalConfigPanel){
         this.globalConfigPanel = globalConfigPanel;
         this.defaultWeightNumberfield = this.lookupReference('defaultWeightNumberfield');
-        this.canvas.setGlobalConfigPanel(this.globalConfigPanel);
+        //register globalConfigPanel to globalEventAgent
+        globalEventAgent.register('globalConfigPanel', this.globalConfigPanel);
     },
 
     //default active tab; fires before onPalettesLoad
@@ -30,20 +33,18 @@ Ext.define('testFunc.view.design.DesignViewController', {
         this.labelCheckbox = this.lookupReference('labelCheckbox');
         this.hiddenTextfield = this.lookupReference('hiddenTextfield');
         this.configTab = this.lookupReference('configTab');
+        //register selectedConfigPanel to globalEventAgent
+        globalEventAgent.register('selectedConfigPanel', this.selectedConfigPanel);
     },
 
     //fires after onSelectedConfigAfterRender, before onGlobalConfigAfterRender
     onPalettesLoad: function(){
-        //console.log("onPalettesLoad Fired");
         this.initCanvas();
         //this.initSlider();
     },
 
     initCanvas: function(){
         this.canvas = new draw2d.CustomCanvas("gfx_holder");
-        //this.configPanel is initialized because onConfigPanelAfterRender fires before initCanvas
-        this.canvas.setSelectedConfigPanel(this.selectedConfigPanel);
-        this.canvas.setMsgPanel(this.msgPanel);
         //set design model instance from viewModel
         this.record = this.getViewModel().getData().design;
         //set design date
@@ -51,6 +52,8 @@ Ext.define('testFunc.view.design.DesignViewController', {
         //set global designContext (pass canvas instance)
         this.designContext = globalContext.getDesignContext();
         this.designContext.setCanvas(this.canvas);
+        //register canvas to globalEventAgent
+        globalEventAgent.register('canvas', this.canvas);
     },
 
     //set design date according to model instance designTimestamp
@@ -65,49 +68,10 @@ Ext.define('testFunc.view.design.DesignViewController', {
         }
         else
         {
-            var modifiedDate = this._convertTsToDate(modifiedTs, 3),
-                createdDate = this._convertTsToDate(createdTs, 1);
+            var modifiedDate = globalUtil.convertTsToDate(modifiedTs, 3),
+                createdDate = globalUtil.convertTsToDate(createdTs, 1);
             dateCmpt.setHtml("Modified: " + modifiedDate + "<br>Created: " + createdDate);
         }
-    },
-
-    //format == 1: mm/dd/yyyy
-    //format == 2: hh:mm
-    //format == 3: mm/dd/yyyy hh:mm
-    _convertTsToDate: function(ts, format){
-        var dateObj = new Date(ts),
-            result = '';
-        if(!format)
-            format = 3;
-        if(format != 2)
-        {
-            //set month
-            var month = (dateObj.getMonth() + 1).toString();
-            if(month.length == 1)
-                month = '0' + month;
-            //set day
-            var day = dateObj.getDate().toString();
-            if(day.length == 1)
-                day = '0' + day;
-            //set year
-            var year = dateObj.getFullYear().toString();
-            result += (month + '/' + day + '/' + year);
-        }
-        if(format != 1)
-        {
-            if(format == 3)
-                result += ' ';
-            //set hour
-            var hour = dateObj.getHours().toString();
-            if(hour.length == 1)
-                hour = '0' + hour;
-            //set minute
-            var minute = dateObj.getMinutes().toString();
-            if(minute.length == 1)
-                minute = '0' + minute;
-            result += (hour + ':' + minute);
-        }
-        return result;
     },
 
     //JQuery-UI slider
@@ -183,16 +147,23 @@ Ext.define('testFunc.view.design.DesignViewController', {
     },
 
     onSelectedConfigSave: function(button){
-        this.canvas.fireEvent('fromSelectedConfigPanel', {
-            type: 'setConn',
-            weight: this.weightNumberfield.getValue(),
-            labelOn: this.labelCheckbox.getValue()
-        });
+        if(globalEventAgent.isRegistered('canvas'))
+        {
+            globalEventAgent.makeEvent("canvas", 'fromSelectedConfigPanel', {
+                type: 'setConn',
+                weight: this.weightNumberfield.getValue(),
+                labelOn: this.labelCheckbox.getValue()
+            });
+        }
+        else
+        {
+            console.log("canvas hasn't registered itself to globalEventAgent.");
+        }
     },
 
-    //handle msg events from canvas
-    canvasMsgEventHandler: function(eventObj){
-        if(eventObj.type === 'canvasMsg')
+    //handle msg events from outside
+    msgEventHandler: function(eventObj){
+        if(eventObj.type === 'canvasMsg' || eventObj.type === 'saveAgentMsg')
         {
             this.msg += ("<li>" + eventObj.msg + "</li>");
             this.msgPanel.setHtml("<ul type='disc'>" + this.msg + "</ul>");
@@ -200,7 +171,7 @@ Ext.define('testFunc.view.design.DesignViewController', {
         }
         else
         {
-            console.log("canvasMsgEventHandler fired; unknown event type");
+            console.log("msgEventHandler fired; unknown event type");
         }
     },
 

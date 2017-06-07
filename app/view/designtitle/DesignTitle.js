@@ -1,4 +1,4 @@
-Ext.define('testFunc.view.window.DesignTitle', {
+Ext.define('testFunc.view.designtitle.DesignTitle', {
 	extend: 'Ext.window.Window',
 
 	alias: 'widget.designtitle',
