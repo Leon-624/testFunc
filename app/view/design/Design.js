@@ -26,8 +26,17 @@ Ext.define('testFunc.view.design.Design', {
                     {
                         xtype: 'component',
                         bind: {
-                            html: '{design.designTitle}'
+                            html: '{design.designTitle}<br>Rev. {design.designVersion} - Guest'
                         }
+                    },
+                    {
+                        xtype: 'tbspacer',
+                        width: 150
+                    },
+                    {
+                        xtype: 'component',
+                        reference: 'designDate',
+                        html: "Design Date"
                     },
                     {
                         xtype: 'tbfill'
@@ -128,8 +137,11 @@ Ext.define('testFunc.view.design.Design', {
                     },
                     {
                         xtype: 'tabpanel',
-                        reference: 'configTabs',
+                        reference: 'configTab',
                         anchor: '100%',
+                        title: 'Configuration',
+                        titleAlign: 'left',
+                        tabBarHeaderPosition: 1,    //make tarBar as part of the header and after the title
                         activeTab: 1,
                         plain: false,
                         items: [

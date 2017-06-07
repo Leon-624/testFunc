@@ -10,6 +10,7 @@ Ext.define('testFunc.model.DesignDetail', {
 		'designVersion',
 		'designParent',
 		'designTimestamp',
+		'designCreateTimestamp',
 		'designUserId'
 	],
 	idProperty: 'designId',
