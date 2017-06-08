@@ -21,7 +21,7 @@ Ext.define('testFunc.view.pie.Pie3D', {
             data:[
                 {"os": "Good Guy", "data1": 21},
                 {"os": "Bad Guy", "data1": 28},
-                {"os": "Who Cares", "data1": 51},
+                {"os": "Who Cares", "data1": 51}
             ]
         },
         //theme: 'Muted',

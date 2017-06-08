@@ -3,8 +3,18 @@ Ext.define('testFunc.view.design.DesignViewController', {
 
     alias: 'controller.design',
 
+    /*
+    * Render Sequence When Design Tab Is Not Active Initially:
+    * onPalettesLoad -(design tab activated)-> onMsgPanelAfterRender -> selectedConfigPanel
+    * -> onAfterRender -(glocal config tab activated)-> onGlobalConfigAfterRender
+    *
+    * Render Sequence When Design Tab Is Active Initially:
+    * onMsgPanelAfterRender -> onSelectedConfigAfterRender -> onPalettesLoad
+    * -(glocal config tab activated)-> onGlobalConfigAfterRender
+    */
+
     onAfterRender: function(){
-    	//console.log("Design ViewController onAfterRender Fired");
+        this.initCanvas();
     },
 
     onResize: function(){
@@ -18,7 +28,6 @@ Ext.define('testFunc.view.design.DesignViewController', {
         globalEventAgent.register('msgPanel', this.msgPanel);
     },
 
-    //not the default active tab; fires after selecting global config tab, after onPalettesLoad
     onGlobalConfigAfterRender: function(globalConfigPanel){
         this.globalConfigPanel = globalConfigPanel;
         this.defaultWeightNumberfield = this.lookupReference('defaultWeightNumberfield');
@@ -26,7 +35,7 @@ Ext.define('testFunc.view.design.DesignViewController', {
         globalEventAgent.register('globalConfigPanel', this.globalConfigPanel);
     },
 
-    //default active tab; fires before onPalettesLoad
+    //default active tab
     onSelectedConfigAfterRender: function(selectedConfigPanel){
         this.selectedConfigPanel = selectedConfigPanel;
         this.weightNumberfield = this.lookupReference('weightNumberfield');
@@ -37,9 +46,8 @@ Ext.define('testFunc.view.design.DesignViewController', {
         globalEventAgent.register('selectedConfigPanel', this.selectedConfigPanel);
     },
 
-    //fires after onSelectedConfigAfterRender, before onGlobalConfigAfterRender
     onPalettesLoad: function(){
-        this.initCanvas();
+        //this.initCanvas();
         //this.initSlider();
     },
 
@@ -59,19 +67,10 @@ Ext.define('testFunc.view.design.DesignViewController', {
     //set design date according to model instance designTimestamp
     setDesignDate: function(){
         var record = this.record,
-            modifiedTs  = record.get('designTimestamp'),
-            createdTs = record.get('designCreateTimestamp'),
+            modified  = record.get('designTimestamp'),
+            creation = record.get('designCreateTimestamp'),
             dateCmpt = this.lookupReference('designDate');
-        if(typeof(modifiedTs) == 'string')
-        {
-            dateCmpt.setHtml("Modified: " + modifiedTs + "<br>Created: " + createdTs);
-        }
-        else
-        {
-            var modifiedDate = globalUtil.convertTsToDate(modifiedTs, 3),
-                createdDate = globalUtil.convertTsToDate(createdTs, 1);
-            dateCmpt.setHtml("Modified: " + modifiedDate + "<br>Created: " + createdDate);
-        }
+        dateCmpt.setHtml("Modified: " + modified + "<br>Created: " + creation);
     },
 
     //JQuery-UI slider

@@ -9,12 +9,14 @@ Ext.define("testFunc.view.designtitle.DesignTitleViewController", {
 		this.callback = this.getView().getCallback();
 		this.serverResponse = null;
 		this.loadMask = null;
+		//mask topview; unmask upon cancel or close
+		this.topView.mask();
 	},
 
 	//upon clicking save, call onSaveClick -> ifTitleValid -> onSaveClickCont
 	onSaveClick: function(){
 		var me = this;
-		//show loadMask
+		//show loadMask; destroy loadMask upon server response
 		this.loadMask = new Ext.LoadMask({
 			msg: 'One second...',
 			target: me.getView()
@@ -62,7 +64,7 @@ Ext.define("testFunc.view.designtitle.DesignTitleViewController", {
 
 	onClose: function(){
 		//unmask topView if window is cancelled or closed
-		if(this.topView && !globalContext.getDesignContext().getDesignTitle())
+		if(this.topView)
 		{
 			if(this.topView.isMasked())
 				this.topView.unmask();

@@ -16,7 +16,7 @@ Ext.define('testFunc.view.pie.Pie3DViewModel', {
 
             data:[
                 {"os": "IOS", "data1": 30},
-                {"os": "Android", "data1": 70},
+                {"os": "Android", "data1": 70}
             ]
 
             /*listeners: {

@@ -6,7 +6,7 @@
 Ext.application({
     name: 'testFunc',
 
-    extend: 'testFunc.Application',
+    extend: 'testFunc.Application'
 
     /*requires: [
         'testFunc.view.main.Main'

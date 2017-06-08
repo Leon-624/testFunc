@@ -1,60 +1,68 @@
-Ext.define('testFunc.view.user.UserList', {
+Ext.define('testFunc.view.designlist.DesignList', {
 	extend: 'Ext.grid.Panel',
 
-	alias: 'widget.userlist',
-	id: 'userlistId',
+	alias: 'widget.designlist',
 
-	controller: 'userlist',
-	viewModel: 'userlist',
-	/*viewModel: {
-		type: 'userlist'
-	},*/
-	//store: {},
+	controller: 'designlist',
+	viewModel: 'designlist',
 
 	bind: {
 		title: '{title}'
 	},
 
-	viewConfig: {
-		plugins: {
-			//drag drop plugin for grid
-			ptype: 'gridviewdragdrop',
-			ddGroup: 'userRecord',
-			dragText: 'Drag and drop record to re-order or fill the form'
-		}
-	},
-
-	constructor: function(config){
-    	console.log("View UserList Constructing");
-    	this.callParent(arguments);
-    },
-
 	initComponent: function(){
-		//inline store
-		/*this.store = {
-			fields: ['name', 'email'],
-			data: [
-				{name: 'N1', email: 'N1@gmail.com'},
-				{name: 'N2', email: 'N2@gmail.com'}
-			]
-		};*/
-
-		//use separate store class
-		//this.store = Ext.create('AccountManager.store.Users');
-
-		//use viewmodel
-		this.store = this.getViewModel().getStore("users");
-
+		//get store from viewModel
+		this.store = this.getViewModel().getStore("designlist");
 		this.columns = [
-			{header: 'Name', dataIndex: 'userName', flex: 1},
-			{header: 'Email', dataIndex: 'userEmail', flex: 1}
+			{
+				text: 'Design Title',
+				dataIndex: 'designTitle',
+				sortable: true,
+				hideable: false,
+				flex: 3
+			},
+			{
+				text: 'Description',
+				dataIndex: 'designDescription',
+				sortable: false,
+				hideable: true,
+				flex: 3
+			},
+			{
+				text: 'Modified Date',
+				dataIndex: 'designTimestamp',
+				sortable: true,
+				hideable: true,
+				flex: 3
+			},
+			{
+				text: 'Creation Date',
+				dataIndex: 'designCreateTimestamp',
+				sortable: true,
+				hideable: true,
+				flex: 3
+			},
+			{
+				text: 'Version',
+				dataIndex: 'designVersion',
+				sortable: true,
+				hideable: true,
+				flex: 1
+			},
+			{
+				text: 'Action',
+				//dataIndex: 'hehe',
+				sortable: false,
+				hideable: false,
+				flex: 2
+			}
 		];
-
 		this.callParent(arguments);
 	},
 
 	listeners:{
-		itemdblclick: 'editUser'
+		afterrender: 'onAfterRender',
+		itemdblclick: 'onItemDblClick'
 	}
 
 });

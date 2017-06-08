@@ -7,7 +7,6 @@ Ext.define('testFunc.view.design.Design', {
     viewModel: 'design',
 
     layout: 'hbox',
-    //width and height determined by anchor in Application.js
 
     bind: {
         title: '{heading}'
@@ -26,7 +25,7 @@ Ext.define('testFunc.view.design.Design', {
                     {
                         xtype: 'component',
                         bind: {
-                            html: '{design.designTitle}<br>Rev. {design.designVersion} - Guest'
+                            html: '{design.designTitle}<br>Ver. {design.designVersion} - Guest'
                         }
                     },
                     {
@@ -98,6 +97,8 @@ Ext.define('testFunc.view.design.Design', {
     				url : 'html/schematicPalettes.html',
                     autoLoad : true,
                     listeners:{
+                        //the handler name is looked up on the scope,
+                        //which will also be the this reference when the method is called.
                         scope: me.controller,
                         load: 'onPalettesLoad'
                     }

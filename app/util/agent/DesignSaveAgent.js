@@ -30,28 +30,22 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
             record = this.getRecord();
         //cancel all current selection in canvas
         canvas.fireEvent('select', {figure: null});
-        //mask top view
-        if(!topView.isMasked())
-        {
-            topView.mask();
-        }
         //if initial design, ask for design title and set in global designContext, then call back
         if(!this.designContext.getDesignTitle())
         {
-            //topView will be unmasked by DesignTitleViewController if the title window is cancelled
+            //topView will be masked by DesignTitleViewController when title window is present
             this.askDesignTitle();
         }
         //if not initial design or title is set in global designContext, begin saving process
         else
         {
-            //if same design, just unmask topView and return
+            //if same design, just return
             if(!this.designContext.isDesignDirty())
             {
-                topView.unmask();
                 globalUtil.toast("Design Not Changed");
                 return;
             }
-            //show loadMask
+            //show loadMask; destroy loadMask upon success or failure
             this.loadMask = new Ext.LoadMask({
                 msg: 'Saving...',
                 target: topView
@@ -72,7 +66,6 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
                 designMemento: JSON.stringify(designMemento, null, 2),
                 canvasMemento: JSON.stringify(canvasMemento, null, 2),
                 designVersion: record.get('designVersion') + 1,
-                designParent: 0,
                 designParent: record.get('designId'),   //also true for initial design
                 //designTimestamp: set above
                 //designCreateTimestamp: set above
@@ -90,8 +83,8 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
                     topView.getController().setDesignDate();
                     //update designContext cleanpoint
                     me.designContext.markCleanPoint();
-                    //unmask topView
-                    topView.unmask();
+                    //update record info to designList store through global designListContext
+                    globalContext.getDesignListContext().updateRecord(record);
                     //destroy loadMask
                     me.loadMask.hide();
                     me.loadMask.destroy();
@@ -105,8 +98,6 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
                     });
                 },
                 failure: function(thisRecord, operation){
-                    //unmask topView
-                    topView.unmask();
                     //destroy loadMask
                     me.loadMask.hide();
                     me.loadMask.destroy();
@@ -130,8 +121,8 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
 
     /**
      * @method
-     * create a window to ask for title; if title is unique, set title to global designContext,
-     * and call back this.saveDesign(); if title is not unique, window gives error msg and waits
+     * create a window to ask for title, mask topview; if title is unique, set title to global designContext,
+     * and call back this.saveDesign(), unmask topview; if title is not unique, window gives error msg and waits
      * for another input; if window is cancelled, unmask topView and no callback.
      */
     askDesignTitle: function(){

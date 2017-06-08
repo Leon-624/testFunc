@@ -30,20 +30,7 @@ Ext.define('testFunc.view.user.UserList', {
     },
 
 	initComponent: function(){
-		//inline store
-		/*this.store = {
-			fields: ['name', 'email'],
-			data: [
-				{name: 'N1', email: 'N1@gmail.com'},
-				{name: 'N2', email: 'N2@gmail.com'}
-			]
-		};*/
-
-		//use separate store class
-		//this.store = Ext.create('AccountManager.store.Users');
-
-		//use viewmodel
-		this.store = this.getViewModel().getStore("users");
+		this.store = this.getViewModel().getStore("designlist");
 
 		this.columns = [
 			{header: 'Name', dataIndex: 'userName', flex: 1},

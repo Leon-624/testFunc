@@ -4,7 +4,7 @@ Ext.define('testFunc.view.design.DesignViewModel', {
     alias: 'viewmodel.design',
 
     data: {
-    	heading: 'Design You Own'
+    	heading: 'Design'
     },
 
     links: {

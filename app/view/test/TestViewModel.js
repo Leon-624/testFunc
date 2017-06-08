@@ -23,7 +23,7 @@ Ext.define('testFunc.view.test.TestViewModel', {
     		}*/
             create: {
                 designId: 0,
-                designTitle: 'Untitled Design',
+                designTitle: 'Untitled Design'
             }
     	}
     }

@@ -22,17 +22,31 @@ Ext.define('testFunc.Application', {
         "Users"
     ],*/
     requires: [
+        'testFunc.view.viewport.ViewportTab',
+        'testFunc.view.viewport.ViewportTabViewController',
+
+        'testFunc.view.designlist.DesignList',
+        'testFunc.view.designlist.DesignListViewController',
+        'testFunc.view.designlist.DesignListViewModel',
+        'testFunc.model.DesignList',
+
         'testFunc.view.design.Design',
         'testFunc.view.design.DesignViewController',
         'testFunc.view.design.DesignViewModel',
         'testFunc.model.DesignDetail',
+
         'testFunc.view.designtitle.DesignTitle',
         'testFunc.view.designtitle.DesignTitleViewController',
+
         'testFunc.util.agent.DesignSaveAgent',
         'testFunc.util.agent.DesignLoadAgent',
         'testFunc.util.agent.GlobalEventAgent',
+
         'testFunc.util.context.GlobalContext',
-        'testFunc.util.context.DesignContext'
+        'testFunc.util.context.DesignContext',
+        'testFunc.util.context.UserContext',
+        'testFunc.util.context.DesignListContext'
+
         //'testFunc.view.test.Test',
         //'testFunc.view.test.TestViewModel',
         //'testFunc.model.Test',
@@ -43,7 +57,6 @@ Ext.define('testFunc.Application', {
         this.preSetup();
 
         Ext.create('Ext.container.Viewport', {
-            //layout: 'vbox',
             autoScroll: true,
             layout: 'anchor',
             items: [
@@ -67,8 +80,12 @@ Ext.define('testFunc.Application', {
                     xtype: 'test',
                     anchor: '100% 100%'
                 },*/
-                {
+                /*{
                     xtype: 'design',
+                    anchor: '100% 100%'
+                }*/
+                {
+                    xtype: 'viewporttab',
                     anchor: '100% 100%'
                 }
                 /*{
@@ -96,14 +113,14 @@ Ext.define('testFunc.Application', {
     _preSetupStringHash: function(){
         //from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
         String.prototype.hashCode = function(){
-            var hash = 0;
-            if (this.length == 0) return hash;
+            var hashcode = 0;
+            if (this.length == 0) return hashcode;
             for (i = 0; i < this.length; i++) {
-                char = this.charCodeAt(i);
-                hash = ((hash<<5)-hash)+char;
-                hash = hash & hash; // Convert to 32bit integer
+                c = this.charCodeAt(i);
+                hashcode = ((hashcode<<5)-hashcode)+c;
+                hashcode = hashcode & hashcode; // Convert to 32bit integer
             }
-            return hash;
+            return hashcode;
         }
     },
 
@@ -121,9 +138,9 @@ Ext.define('testFunc.Application', {
             });
         };
 
-        //format == 1: mm/dd/yyyy
+        //format == 1: mm/dd/yy
         //format == 2: hh:mm
-        //format == 3: mm/dd/yyyy hh:mm
+        //format == 3: mm/dd/yy hh:mm
         globalUtil.convertTsToDate = function(ts, format){
             var dateObj = new Date(ts),
                 result = '';
@@ -140,7 +157,7 @@ Ext.define('testFunc.Application', {
                 if(day.length == 1)
                     day = '0' + day;
                 //set year
-                var year = dateObj.getFullYear().toString();
+                var year = dateObj.getFullYear().toString().substr(2,3);
                 result += (month + '/' + day + '/' + year);
             }
             if(format != 1)
