@@ -3,12 +3,12 @@ Ext.define("testFunc.view.designlist.DesignListViewController", {
 
 	alias: 'controller.designlist',
 
-	onAfterRender: function(){
+	onAfterRender: function(gridPanel){
 		this.designlistStore = this.getViewModel().getStore('designlist');
 		//set global designListContext
-		globalContext.getDesignListContext().setDesignListStore(this.designlistStore);
+		this.setDesignListContext();
 		//examine if user logged in
-		var userContext = globalContext.getUserContext();
+		var userContext = globalContextManager.getUserContext();
 		//already logged in
 		if(userContext.isLoggedIn())
 		{
@@ -23,6 +23,25 @@ Ext.define("testFunc.view.designlist.DesignListViewController", {
 		{
 			//some action
 		}
-	}
+	},
 
+	setDesignListContext: function(){
+		globalContextManager.getDesignListContext().setDesignListStore(this.designlistStore);
+	},
+
+	onActionButtonClick: function(button){
+		button.setStyle('backgroundColor', '#ff9900');
+	},
+
+	onActionButtonMouseOver: function(button){
+		button.setStyle('backgroundColor', '#ff9900');
+	},
+
+	onActionButtonMouseOut: function(button){
+		button.setStyle('backgroundColor', '#29a329');
+	},
+
+	onActionButtonFocus: function(button){
+		button.setStyle('backgroundColor', '#e65c00');
+	}
 });

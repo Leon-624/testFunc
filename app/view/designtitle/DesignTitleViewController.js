@@ -38,7 +38,7 @@ Ext.define("testFunc.view.designtitle.DesignTitleViewController", {
 			//title is unique, save title to global designContext and call back
 			if(this.serverResponse.unique)
 			{
-				globalContext.getDesignContext().setDesignTitle(this.serverResponse.title);
+				globalContextManager.getDesignContext().setDesignTitle(this.serverResponse.title);
 				if(this.callback)
 				{
 					this.callback();

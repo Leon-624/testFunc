@@ -1,6 +1,7 @@
 //global variable
-var globalContext = null;
-var globalEventAgent = null;
+var globalContextManager = null;
+var globalAgentManager = null;
+var globalEventManager = null;
 
 //global namespace
 var globalUtil = {};
@@ -38,11 +39,13 @@ Ext.define('testFunc.Application', {
         'testFunc.view.designtitle.DesignTitle',
         'testFunc.view.designtitle.DesignTitleViewController',
 
+        'testFunc.util.manager.GlobalAgentManager',
         'testFunc.util.agent.DesignSaveAgent',
         'testFunc.util.agent.DesignLoadAgent',
-        'testFunc.util.agent.GlobalEventAgent',
 
-        'testFunc.util.context.GlobalContext',
+        'testFunc.util.manager.GlobalEventManager',
+
+        'testFunc.util.manager.GlobalContextManager',
         'testFunc.util.context.DesignContext',
         'testFunc.util.context.UserContext',
         'testFunc.util.context.DesignListContext'
@@ -102,8 +105,9 @@ Ext.define('testFunc.Application', {
 
     preSetup: function(){
         //set global variables
-        globalContext = new testFunc.util.context.GlobalContext();
-        globalEventAgent = new testFunc.util.agent.GlobalEventAgent();
+        globalContextManager = Ext.create('testFunc.util.manager.GlobalContextManager');
+        globalAgentManager = Ext.create('testFunc.util.manager.GlobalAgentManager');
+        globalEventManager = Ext.create('testFunc.util.manager.GlobalEventManager');
         //set globalUtil namespace
         this._preSetupGlobalUtil();
         //set string hash method

@@ -1,4 +1,4 @@
-Ext.define('testFunc.util.agent.GlobalEventAgent', {
+Ext.define('testFunc.util.manager.GlobalEventManager', {
 
 	//all config variable can be accessed by getter and setter, but no direct access
     config: {
@@ -10,9 +10,10 @@ Ext.define('testFunc.util.agent.GlobalEventAgent', {
         return this;
     },
 
+    //components call register() to register themselves in each afterrender handler
     register: function(cmptName, cmptObj){
         //DON'T USE this.registeredCmpt.cmptName,
-        //because cmptName will not be interpreted by its real string value
+        //because cmptName will not be interpreted by its actual string value
         this.registeredCmpt[cmptName] = cmptObj;
     },
 

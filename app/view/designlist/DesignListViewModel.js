@@ -4,7 +4,13 @@ Ext.define('testFunc.view.designlist.DesignListViewModel', {
     alias: 'viewmodel.designlist',
 
     data: {
-        title: 'Designs'
+        title: 'Designs',
+        titleFlex: 3,
+        descriptionFlex: 3,
+        modifiedFlex: 2,
+        creationFlex: 2,
+        versionFlex: 1,
+        actionFlex: 2
     },
 
     stores: {

@@ -9,29 +9,13 @@ Ext.define('testFunc.model.DesignDetail', {
 		'canvasMemento',
 		'designVersion',
 		'designParent',
-		{
-			name: 'designTimestamp',
-			//convert timestamp to readable date and time
-			convert: function (value) {
-				if(typeof(value) === 'number')
-					return globalUtil.convertTsToDate(value, 3);
-				else
-					return value;
-			}
-		},
-		{
-			name: 'designCreateTimestamp',
-			//convert timestamp to readable date and time
-			convert: function (value) {
-				if(typeof(value) === 'number')
-					return globalUtil.convertTsToDate(value, 3);
-				else
-					return value;
-			}
-		},
+		'designTimestamp',		//do not use convert because it needs to be consistent with service
+		'designCreateTimestamp',//do not use convert because it needs to be consistent with service
 		'designUserId'
 	],
 	idProperty: 'designId',
+
+	convertOnSet: true,
 
 	proxy: {
         type: 'ajax',

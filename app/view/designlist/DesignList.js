@@ -19,42 +19,72 @@ Ext.define('testFunc.view.designlist.DesignList', {
 				dataIndex: 'designTitle',
 				sortable: true,
 				hideable: false,
-				flex: 3
+				draggable: true,
+				bind: {
+					flex: '{titleFlex}'
+				}
 			},
 			{
 				text: 'Description',
 				dataIndex: 'designDescription',
 				sortable: false,
 				hideable: true,
-				flex: 3
+				draggable: true,
+				bind: {
+					flex: '{descriptionFlex}'
+				}
 			},
 			{
 				text: 'Modified Date',
 				dataIndex: 'designTimestamp',
 				sortable: true,
 				hideable: true,
-				flex: 3
+				draggable: true,
+				bind: {
+					flex: '{modifiedFlex}'
+				}
 			},
 			{
 				text: 'Creation Date',
 				dataIndex: 'designCreateTimestamp',
 				sortable: true,
 				hideable: true,
-				flex: 3
+				draggable: true,
+				bind: {
+					flex: '{creationFlex}'
+				}
 			},
 			{
 				text: 'Version',
 				dataIndex: 'designVersion',
 				sortable: true,
 				hideable: true,
-				flex: 1
+				draggable: true,
+				bind: {
+					flex: '{versionFlex}'
+				}
 			},
 			{
 				text: 'Action',
-				//dataIndex: 'hehe',
+				xtype: 'widgetcolumn',
 				sortable: false,
 				hideable: false,
-				flex: 2
+				draggable: true,
+				stopSelection: true,	//prevent grid selection upon click on the widget
+				bind: {
+					flex: '{actionFlex}'
+				},
+				widget: {
+					xtype: 'button',
+					text: 'Edit Design',
+					style: 'background-color:#29a329',
+					listeners: {
+						mouseover: 'onActionButtonMouseOver',
+						mouseout: 'onActionButtonMouseOut',
+						focus: 'onActionButtonFocus',
+						click: 'onActionButtonClick'
+					}
+				}
 			}
 		];
 		this.callParent(arguments);

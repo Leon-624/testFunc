@@ -6,7 +6,7 @@ Ext.define('testFunc.util.context.DesignListContext', {
 
 	//all config variable can be accessed by getter and setter, but no direct access
 	config: {
-		designListStore: null
+		designListStore: null	//store of testFunc.model.DesignList; set by DesignListViewController in setDesignListContext method
 	},
 
 	/**
@@ -53,8 +53,10 @@ Ext.define('testFunc.util.context.DesignListContext', {
 					designDescription: record.get('designDescription'),
 					designVersion: record.get('designVersion'),
 					designParent: record.get('designParent'),
-					designTimestamp: record.data.designTimestamp,
-                	designCreateTimestamp: record.data.designCreateTimestamp,
+					//can use record.get('designTimestamp')
+					//because no field conversion in DesignDetail model
+					designTimestamp: record.get('designTimestamp'),
+                	designCreateTimestamp: record.get('designCreateTimestamp'),
                 	designUserId: record.get('designUserId')
 				});
 				//crudState doesn't matter here because store are not going to sync

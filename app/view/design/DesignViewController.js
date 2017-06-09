@@ -12,7 +12,7 @@ Ext.define('testFunc.view.design.DesignViewController', {
     * onMsgPanelAfterRender -> onSelectedConfigAfterRender -> onPalettesLoad
     * -(glocal config tab activated)-> onGlobalConfigAfterRender
     */
-
+    
     onAfterRender: function(){
         this.initCanvas();
     },
@@ -24,15 +24,15 @@ Ext.define('testFunc.view.design.DesignViewController', {
     onMsgPanelAfterRender: function(msgPanel){
         this.msgPanel = msgPanel;
         this.msg = "";
-        //register msgPanel to globalEventAgent
-        globalEventAgent.register('msgPanel', this.msgPanel);
+        //register msgPanel to globalEventManager
+        globalEventManager.register('msgPanel', this.msgPanel);
     },
 
     onGlobalConfigAfterRender: function(globalConfigPanel){
         this.globalConfigPanel = globalConfigPanel;
         this.defaultWeightNumberfield = this.lookupReference('defaultWeightNumberfield');
-        //register globalConfigPanel to globalEventAgent
-        globalEventAgent.register('globalConfigPanel', this.globalConfigPanel);
+        //register globalConfigPanel to globalEventManager
+        globalEventManager.register('globalConfigPanel', this.globalConfigPanel);
     },
 
     //default active tab
@@ -42,8 +42,8 @@ Ext.define('testFunc.view.design.DesignViewController', {
         this.labelCheckbox = this.lookupReference('labelCheckbox');
         this.hiddenTextfield = this.lookupReference('hiddenTextfield');
         this.configTab = this.lookupReference('configTab');
-        //register selectedConfigPanel to globalEventAgent
-        globalEventAgent.register('selectedConfigPanel', this.selectedConfigPanel);
+        //register selectedConfigPanel to globalEventManager
+        globalEventManager.register('selectedConfigPanel', this.selectedConfigPanel);
     },
 
     onPalettesLoad: function(){
@@ -51,26 +51,56 @@ Ext.define('testFunc.view.design.DesignViewController', {
         //this.initSlider();
     },
 
+    //initialization sequence matters!
     initCanvas: function(){
         this.canvas = new draw2d.CustomCanvas("gfx_holder");
         //set design model instance from viewModel
         this.record = this.getViewModel().getData().design;
         //set design date
         this.setDesignDate();
-        //set global designContext (pass canvas instance)
-        this.designContext = globalContext.getDesignContext();
+        //set global designContext
+        this.setDesignContext();
+        //set global design save/load agents
+        this.setDesignAgent();
+        //register canvas to globalEventManager
+        globalEventManager.register('canvas', this.canvas);
+    },
+
+    setDesignContext: function(){
+        this.designContext = globalContextManager.getDesignContext();
         this.designContext.setCanvas(this.canvas);
-        //register canvas to globalEventAgent
-        globalEventAgent.register('canvas', this.canvas);
+        this.designContext.markCleanPoint();
+    },
+
+    setDesignAgent: function(){
+        //set saveAgent
+        this.saveAgent = globalAgentManager.getDesignSaveAgent();
+        this.saveAgent.setCanvas(this.canvas);
+        this.saveAgent.setTopView(this.getView());
+        this.saveAgent.setRecord(this.getViewModel().getData().design);
+        //set loadAgent
+        this.loadAgent = globalAgentManager.getDesignLoadAgent();
+        this.loadAgent.setCanvas(this.canvas);
+        this.loadAgent.setTopView(this.getView());
+        this.loadAgent.setRecord(this.getViewModel().getData().design);
     },
 
     //set design date according to model instance designTimestamp
     setDesignDate: function(){
         var record = this.record,
-            modified  = record.get('designTimestamp'),
-            creation = record.get('designCreateTimestamp'),
+            modifiedTs  = record.get('designTimestamp'),
+            createdTs = record.get('designCreateTimestamp'),
             dateCmpt = this.lookupReference('designDate');
-        dateCmpt.setHtml("Modified: " + modified + "<br>Created: " + creation);
+        if(typeof(modifiedTs) == 'string')
+        {
+            dateCmpt.setHtml("Modified: " + modifiedTs + "<br>Created: " + createdTs);
+        }
+        else
+        {
+            var modifiedDate = globalUtil.convertTsToDate(modifiedTs, 3),
+                createdDate = globalUtil.convertTsToDate(createdTs, 3);
+            dateCmpt.setHtml("Modified: " + modifiedDate + "<br>Created: " + createdDate);
+        }
     },
 
     //JQuery-UI slider
@@ -94,12 +124,7 @@ Ext.define('testFunc.view.design.DesignViewController', {
     },
 
     onDesignSave: function(){
-        var saveAgent = Ext.create('testFunc.util.agent.DesignSaveAgent', {
-            canvas: this.canvas,
-            topView: this.getView(),
-            record: this.getViewModel().getData().design
-        });
-        saveAgent.saveDesign();
+        this.saveAgent.saveDesign();
 
         /*var writer = new draw2d.io.json.Writer();
         writer.marshal(this.canvas, function(designJson){
@@ -146,9 +171,9 @@ Ext.define('testFunc.view.design.DesignViewController', {
     },
 
     onSelectedConfigSave: function(button){
-        if(globalEventAgent.isRegistered('canvas'))
+        if(globalEventManager.isRegistered('canvas'))
         {
-            globalEventAgent.makeEvent("canvas", 'fromSelectedConfigPanel', {
+            globalEventManager.makeEvent("canvas", 'fromSelectedConfigPanel', {
                 type: 'setConn',
                 weight: this.weightNumberfield.getValue(),
                 labelOn: this.labelCheckbox.getValue()
@@ -156,7 +181,7 @@ Ext.define('testFunc.view.design.DesignViewController', {
         }
         else
         {
-            console.log("canvas hasn't registered itself to globalEventAgent.");
+            console.log("canvas hasn't registered itself to globalEventManager.");
         }
     },
 

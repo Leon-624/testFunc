@@ -6,9 +6,9 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
 
 	//all config variable can be accessed by getter and setter, but no direct access
     config: {
-        canvas: null,   //draw2d.CustomCanvas
-        topView: null,  //testFunc.view.design.Design
-        record: null    //testFunc.model.Design
+        canvas: null,   //draw2d.CustomCanvas; set by DesignViewController in setDesignAgent method
+        topView: null,  //testFunc.view.design.Design; set by DesignViewController in setDesignAgent method
+        record: null    //testFunc.model.Design; set by DesignViewController in setDesignAgent method
     },
 
     /**
@@ -16,7 +16,7 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
      */
     constructor: function(config){
         this.initConfig(config);
-        this.designContext = globalContext.getDesignContext();
+        this.designContext = globalContextManager.getDesignContext();
         this.loadMask = null;
         return this;
     },
@@ -58,7 +58,11 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
             //set designTimestamp and designCreateTimestamp
             record.set('designTimestamp', Date.now());
             if(record.get('designVersion') == 0)
+            {
+                //can use record.get('designTimestamp')
+                //because no field conversion in DesignDetail model
                 record.set('designCreateTimestamp', record.get('designTimestamp'));
+            }
             //set rest of attributes
             record.set({
                 designTitle: this.designContext.getDesignTitle(),
@@ -84,7 +88,7 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
                     //update designContext cleanpoint
                     me.designContext.markCleanPoint();
                     //update record info to designList store through global designListContext
-                    globalContext.getDesignListContext().updateRecord(record);
+                    globalContextManager.getDesignListContext().updateRecord(record);
                     //destroy loadMask
                     me.loadMask.hide();
                     me.loadMask.destroy();
@@ -92,7 +96,7 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
                     //show toast
                     globalUtil.toast("Design Saved");
                     //show msg on msgPanel
-                    globalEventAgent.makeEvent("msgPanel", 'msg', {
+                    globalEventManager.makeEvent("msgPanel", 'msg', {
                         type: 'saveAgentMsg',
                         msg: 'Design saved as version ' + record.get('designVersion') + '.'
                     });
@@ -105,7 +109,7 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
                     //show alert
                     Ext.Msg.alert('Failure', "Something is wrong...");
                     //show msg on msgPanel
-                    globalEventAgent.makeEvent("msgPanel", 'msg', {
+                    globalEventManager.makeEvent("msgPanel", 'msg', {
                         type: 'saveAgentMsg',
                         msg: 'Something is wrong trying to save...'
                     });
