@@ -70,7 +70,7 @@ Ext.define('testFunc.view.designlist.DesignList', {
 				sortable: false,
 				hideable: false,
 				draggable: true,
-				stopSelection: true,	//prevent grid selection upon click on the widget
+				stopSelection: false,	//do not prevent grid selection upon click on the widget
 				bind: {
 					flex: '{actionFlex}'
 				},

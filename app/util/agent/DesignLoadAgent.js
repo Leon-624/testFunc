@@ -1,5 +1,5 @@
 /**
- * @class testFunc.util.agents.DesignSaveAgent
+ * @class testFunc.util.agents.DesignLoadAgent
  * @author  Liyan Xu
  */
 Ext.define('testFunc.util.agent.DesignLoadAgent', {
@@ -18,124 +18,148 @@ Ext.define('testFunc.util.agent.DesignLoadAgent', {
         this.initConfig(config);
         this.designContext = globalContextManager.getDesignContext();
         this.loadMask = null;
+        this.designIdToBeLoaded = null;     //update in loadDesign
         return this;
     },
 
     /**
      * @method
      */
-    saveDesign: function(){
-        var canvas = this.getCanvas(),
-            topView = this.getTopView(),
-            record = this.getRecord();
-        //cancel all current selection in canvas
-        canvas.fireEvent('select', {figure: null});
-        //if initial design, ask for design title and set in global designContext, then call back
-        if(!this.designContext.getDesignTitle())
+    loadDesign: function(designId){
+        //if designId is passed (by DesignListViewController), set this.designIdToBeLoaded
+        if(designId !== undefined)
         {
-            //topView will be masked by DesignTitleViewController when title window is present
-            this.askDesignTitle();
+            this.designIdToBeLoaded = designId;
         }
-        //if not initial design or title is set in global designContext, begin saving process
+        //if designId is not passed (by askUnsavedDesign() or saveDesign() in saveAgent), set designId
         else
         {
-            //if same design, just return
-            if(!this.designContext.isDesignDirty())
+            designId = this.designIdToBeLoaded;
+        }
+        //if current design is dirty, ask if save design first
+        if(this.designContext.isDesignDirty())
+        {
+            this.askUnsavedDesign();
+        }
+        else
+        {
+            //special case: designId is 0, reset design
+            if(designId === 0)
             {
-                globalUtil.toast("Design Not Changed");
+                globalAgentManager.getDesignClearAgent().resetDesign();
                 return;
             }
-            //show loadMask; destroy loadMask upon success or failure
-            this.loadMask = new Ext.LoadMask({
-                msg: 'Saving...',
-                target: topView
-            });
-            this.loadMask.show();
-            //prepare memento
-            var canvasMemento = canvas.getCanvasMemento(),
-                designMemento = canvas.getDesignMemento();
-            //assign values into record
-            //set designTimestamp and designCreateTimestamp
-            record.set('designTimestamp', Date.now());
-            if(record.get('designVersion') == 0)
-            {
-                //can use record.get('designTimestamp')
-                //because no field conversion in DesignDetail model
-                record.set('designCreateTimestamp', record.get('designTimestamp'));
-            }
-            //set rest of attributes
-            record.set({
-                designTitle: this.designContext.getDesignTitle(),
-                designDescription: this.designContext.getDesignDescription(),
-                designMemento: JSON.stringify(designMemento, null, 2),
-                canvasMemento: JSON.stringify(canvasMemento, null, 2),
-                designVersion: record.get('designVersion') + 1,
-                designParent: record.get('designId'),   //also true for initial design
-                //designTimestamp: set above
-                //designCreateTimestamp: set above
-                designUserId: 'testid'
-            });
-            //set record to phantom to make it call CREATE api defined in model
-            var me = this;
-            record.phantom = true;
-            record.save({
+            //load testFunc.model.DesignDetail
+            var record = this.getRecord(),
+                canvas = this.getCanvas(),
+                me = this;
+            record.getProxy().getApi().read = globalConst.modelUrl.designDetail.read + designId;
+            record.load({
                 success: function(thisRecord, operation){
-                    //update record designId
-                    var responseObj = JSON.parse(operation.getResponse().responseText);
-                    record.set('designId', responseObj.designId);
-                    //update design date on topView
-                    topView.getController().setDesignDate();
-                    //update designContext cleanpoint
-                    me.designContext.markCleanPoint();
-                    //update record info to designList store through global designListContext
-                    globalContextManager.getDesignListContext().updateRecord(record);
-                    //destroy loadMask
-                    me.loadMask.hide();
-                    me.loadMask.destroy();
-                    me.loadMask = null;
-                    //show toast
-                    globalUtil.toast("Design Saved");
-                    //show msg on msgPanel
-                    globalEventManager.makeEvent("msgPanel", 'msg', {
-                        type: 'saveAgentMsg',
-                        msg: 'Design saved as version ' + record.get('designVersion') + '.'
+                    //clear canvas figures
+                    canvas.fireEvent('select', {figure: null});
+                    canvas.clear();
+                    //read memento into canvas
+                    canvas.setPersistentAttributes(JSON.parse(record.get('canvasMemento')));
+                    var figureTsMap = {
+                        nodeMap: {},
+                        layerMap: {}
+                    };
+                    var reader = new draw2d.io.json.CustomReader();
+                    reader.unmarshal(canvas, record.get('designMemento'), figureTsMap);
+                    //complete setting custom attributes of figures
+                    var figures = canvas.getFigures();
+                    figures.each(function(index, value){
+                        if(value.name === 'NodeCircle')
+                        {
+                            var parentTs = value.parentLayer;
+                            value.parentLayer = figureTsMap.layerMap[parentTs];
+                        }
+                        else if(value.name === 'LayerRectangle')
+                        {
+                            for(var i = 0; i < value.childNodes.length; ++i)
+                            {
+                                var childTs = value.childNodes[i];
+                                value.childNodes[i] = figureTsMap.nodeMap[childTs];
+                            }
+                        }
+                        else
+                        {
+                            console.log("Load Agent: Unknown Figure Name: " + value.name);
+                        }
                     });
+                    //complete setting custom attributes of canvas
+                    for(var i = 0; i < canvas.layerRecs.length; ++i)
+                    {
+                        var layerTs = canvas.layerRecs[i];
+                        canvas.layerRecs[i] = figureTsMap.layerMap[layerTs];
+                    }
+                    for(var i = 0; i < canvas.nodeCirs.length; ++i)
+                    {
+                        var nodeTs = canvas.nodeCirs[i];
+                        canvas.nodeCirs[i] = figureTsMap.nodeMap[nodeTs];
+                    }
+                    canvas.uninstallEditPolicy(canvas.customConnCreatePolicy);
+                    canvas.customConnCreatePolicy = new draw2d.policy.connection.CustomConnectionCreatePolicy
+                        (canvas.defaultWeight, canvas.defaultRouter, canvas.defaultLabelOn, $.proxy(canvas.sendMsgToMsgPanel, canvas));
+                    canvas.installEditPolicy(canvas.customConnCreatePolicy);
+                    //set global designContext
+                    var designContext = globalContextManager.getDesignContext();
+                    designContext.setDesignTitle(record.get('designTitle'));
+                    designContext.setDesignDescription(record.get('designDescription'));
+                    //reset date
+                    var topView = me.getTopView();
+                    topView.getController().setDesignDate();
+                    //reset router
+                    var routerCheckItem = topView.getController().lookupReference(canvas.defaultRouter + 'CheckItem');
+                    routerCheckItem.setChecked(true);
+                    //mark clean point
+                    designContext.markCleanPoint();
                 },
                 failure: function(thisRecord, operation){
-                    //destroy loadMask
-                    me.loadMask.hide();
-                    me.loadMask.destroy();
-                    me.loadMask = null;
-                    //show alert
-                    Ext.Msg.alert('Failure', "Something is wrong...");
-                    //show msg on msgPanel
-                    globalEventManager.makeEvent("msgPanel", 'msg', {
-                        type: 'saveAgentMsg',
-                        msg: 'Something is wrong trying to save...'
-                    });
                 },
                 //will be called whether the save succeeded or failed
                 callback: function(thisRecord, operation, success){
                     //no action
                 }
             });
-
+            
         }
     },
 
-    /**
-     * @method
-     * create a window to ask for title, mask topview; if title is unique, set title to global designContext,
-     * and call back this.saveDesign(), unmask topview; if title is not unique, window gives error msg and waits
-     * for another input; if window is cancelled, unmask topView and no callback.
-     */
-    askDesignTitle: function(){
-        //create window asking for title
-        var designTitleWindow = Ext.create({
-            xtype: 'designtitle',
-            topView: this.getTopView(),
-            callback: $.proxy(this.saveDesign, this)
+    askUnsavedDesign: function(){
+        var me = this;
+        Ext.Msg.show({
+            title:'Save Changes?',
+            message: 'You have unsaved changes. Would you like to save your changes first?',
+            buttons: Ext.Msg.YESNOCANCEL,
+            icon: Ext.Msg.QUESTION,
+            fn: function(btn){
+                me._proceedAskUnsavedDesignFeedback(btn);
+            }
         });
-    }
+    },
 
+    _proceedAskUnsavedDesignFeedback: function(btn){
+        //click yes, save design first, then callback loadDesign(designId)
+        if(btn === 'yes')
+        {
+            var me = this;
+            var saveAgent = globalAgentManager.getDesignSaveAgent();
+            //need to make async call, otherwise 'Save Changes' window will not close
+            globalUtil.async($.proxy(saveAgent.saveDesign, saveAgent),
+                                $.proxy(me.loadDesign, me));
+        }
+        //click no, mark current design clean point, then callback loadDesign(designId)
+        else if(btn === 'no')
+        {
+            this.designContext.markCleanPoint();
+            this.loadDesign();
+        }
+        //click cancel, no saving or loading action
+        else
+        {
+            //no action
+        }
+    }
 });

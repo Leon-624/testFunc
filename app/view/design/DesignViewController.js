@@ -83,6 +83,11 @@ Ext.define('testFunc.view.design.DesignViewController', {
         this.loadAgent.setCanvas(this.canvas);
         this.loadAgent.setTopView(this.getView());
         this.loadAgent.setRecord(this.getViewModel().getData().design);
+        //set clearAgent
+        this.clearAgent = globalAgentManager.getDesignClearAgent();
+        this.clearAgent.setCanvas(this.canvas);
+        this.clearAgent.setTopView(this.getView());
+        this.clearAgent.setRecord(this.getViewModel().getData().design);
     },
 
     //set design date according to model instance designTimestamp
@@ -161,6 +166,10 @@ Ext.define('testFunc.view.design.DesignViewController', {
                 }
             });
         });*/
+    },
+
+    onNewDesignClick: function(){
+        this.loadAgent.loadDesign(0);
     },
 
     onConnStyleMenuClick: function(menu, item){

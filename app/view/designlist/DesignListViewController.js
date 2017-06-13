@@ -14,7 +14,7 @@ Ext.define("testFunc.view.designlist.DesignListViewController", {
 		{
 			var userId = userContext.getUserId();
 			//set store READ api
-			this.designlistStore.getProxy().getApi().read += userId;
+			this.designlistStore.getProxy().getApi().read = globalConst.modelUrl.designList.read + userId;
 			//load store to retrieve design list
 			this.designlistStore.load();
 		}
@@ -29,8 +29,13 @@ Ext.define("testFunc.view.designlist.DesignListViewController", {
 		globalContextManager.getDesignListContext().setDesignListStore(this.designlistStore);
 	},
 
-	onActionButtonClick: function(button){
+	onActionButtonClick: function(button, event){
 		button.setStyle('backgroundColor', '#ff9900');
+		//get associated record
+		var rowIndex = button.up('gridview').indexOf(button.el.up('table')),
+			record = this.getView().getStore().getAt(rowIndex);
+		button.up('viewporttab').setActiveTab(1);
+		globalAgentManager.getDesignLoadAgent().loadDesign(record.get('designId'));
 	},
 
 	onActionButtonMouseOver: function(button){

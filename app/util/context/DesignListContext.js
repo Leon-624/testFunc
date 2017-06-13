@@ -32,6 +32,7 @@ Ext.define('testFunc.util.context.DesignListContext', {
 			if(record.get('designVersion') === 1)
 			{
 				var newDesignListItem = Ext.create('testFunc.model.DesignList',{  
+    				designId: record.get('designId'),
     				designTitle: record.get('designTitle'),
                 	designDescription: record.get('designDescription'),
                 	designVersion: record.get('designVersion'),
@@ -50,6 +51,7 @@ Ext.define('testFunc.util.context.DesignListContext', {
 				var previousDesign = designListStore.findRecord('designTitle',
 									record.get('designTitle'));
 				previousDesign.set({
+					designId: record.get('designId'),
 					designDescription: record.get('designDescription'),
 					designVersion: record.get('designVersion'),
 					designParent: record.get('designParent'),

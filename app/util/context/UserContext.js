@@ -16,6 +16,10 @@ Ext.define('testFunc.util.context.UserContext', {
 
 	getUserId: function(){
 		return this.userId;
+	},
+
+	getUserName: function(){
+		return 'test user';
 	}
 
 });

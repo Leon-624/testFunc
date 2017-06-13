@@ -5,6 +5,7 @@ var globalEventManager = null;
 
 //global namespace
 var globalUtil = {};
+var globalConst = {};
 
 /**
  * The main application class. An instance of this class is created by app.js when it
@@ -42,6 +43,7 @@ Ext.define('testFunc.Application', {
         'testFunc.util.manager.GlobalAgentManager',
         'testFunc.util.agent.DesignSaveAgent',
         'testFunc.util.agent.DesignLoadAgent',
+        'testFunc.util.agent.DesignClearAgent',
 
         'testFunc.util.manager.GlobalEventManager',
 
@@ -110,6 +112,8 @@ Ext.define('testFunc.Application', {
         globalEventManager = Ext.create('testFunc.util.manager.GlobalEventManager');
         //set globalUtil namespace
         this._preSetupGlobalUtil();
+        //set globalConst namespace
+        this._preSetupGlobalConst();
         //set string hash method
         this._preSetupStringHash();
     },
@@ -179,6 +183,30 @@ Ext.define('testFunc.Application', {
                 result += (hour + ':' + minute);
             }
             return result;
+        };
+
+        //make a function async by using setTimeout
+        globalUtil.async = function(fn, args){
+            setTimeout(function(){
+                fn(args);
+            }, 10);
+        };
+    },
+
+    _preSetupGlobalConst: function(){
+        globalConst = {
+            modelUrl: {
+                designDetail: {},
+                designList: {}
+            }
+        };
+        globalConst.modelUrl.designDetail = {
+            create: 'http://localhost:8080/testFuncService/rest/designs/create',
+            read: 'http://localhost:8080/testFuncService/rest/designs/retrieve/'
+        };
+        
+        globalConst.modelUrl.designList = {
+            read: 'http://localhost:8080/testFuncService/rest/designs/designlist/retrieve/'
         };
     },
 

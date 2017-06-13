@@ -20,8 +20,8 @@ Ext.define('testFunc.model.DesignDetail', {
 	proxy: {
         type: 'ajax',
         api: {
-        	create: 'http://localhost:8080/testFuncService/rest/designs/create',
-    		read: 'hehe/read',
+        	create: globalConst.modelUrl.designDetail.create,
+    		read: globalConst.modelUrl.designDetail.read,
     		update: 'hehe/update',
     		destroy: 'hehe/destroy'
         },

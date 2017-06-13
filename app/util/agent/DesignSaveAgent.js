@@ -23,8 +23,9 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
 
     /**
      * @method
+     * @param {Function} callbackFromLoadAgent execute upon successful saving
      */
-    saveDesign: function(){
+    saveDesign: function(callbackFromLoadAgent){
         var canvas = this.getCanvas(),
             topView = this.getTopView(),
             record = this.getRecord();
@@ -34,7 +35,7 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
         if(!this.designContext.getDesignTitle())
         {
             //topView will be masked by DesignTitleViewController when title window is present
-            this.askDesignTitle();
+            this.askDesignTitle(callbackFromLoadAgent);
         }
         //if not initial design or title is set in global designContext, begin saving process
         else
@@ -100,6 +101,11 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
                         type: 'saveAgentMsg',
                         msg: 'Design saved as version ' + record.get('designVersion') + '.'
                     });
+                    //execute callbackFromLoadAgent
+                    if(callbackFromLoadAgent)
+                    {
+                        callbackFromLoadAgent();
+                    }
                 },
                 failure: function(thisRecord, operation){
                     //destroy loadMask
@@ -128,13 +134,17 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
      * create a window to ask for title, mask topview; if title is unique, set title to global designContext,
      * and call back this.saveDesign(), unmask topview; if title is not unique, window gives error msg and waits
      * for another input; if window is cancelled, unmask topView and no callback.
+     * add args for saveDesign callbackFromLoadAgent
      */
-    askDesignTitle: function(){
+    askDesignTitle: function(callbackFromLoadAgent){
+        var me = this;
         //create window asking for title
         var designTitleWindow = Ext.create({
             xtype: 'designtitle',
             topView: this.getTopView(),
-            callback: $.proxy(this.saveDesign, this)
+            callback: $.proxy(function(){
+                me.saveDesign(callbackFromLoadAgent);
+            }, me)
         });
     }
 

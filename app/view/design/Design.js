@@ -25,7 +25,7 @@ Ext.define('testFunc.view.design.Design', {
                     {
                         xtype: 'component',
                         bind: {
-                            html: '{design.designTitle}<br>Ver. {design.designVersion} - Guest'
+                            html: '{design.designTitle}<br>Ver. {design.designVersion} - ' + globalContextManager.getUserContext().getUserName()
                         }
                     },
                     {
@@ -39,6 +39,12 @@ Ext.define('testFunc.view.design.Design', {
                     },
                     {
                         xtype: 'tbfill'
+                    },
+                    {
+                        xtype: 'button',
+                        text: 'Create New Design',
+                        reference: 'newDesignButton',
+                        handler: 'onNewDesignClick'
                     },
                     {
                         xtype: 'slider',
@@ -57,11 +63,12 @@ Ext.define('testFunc.view.design.Design', {
                     {
                         xtype: 'button',
                         text: 'Style',
+                        reference: 'routerStyleButton',
                         menu: new Ext.menu.Menu({
                             items: [
-                                {xtype: 'menucheckitem', group: 'connStyle', text: 'Spline', value: 'spline', checked: true},
-                                {xtype: 'menucheckitem', group: 'connStyle', text: 'Direct', value: 'direct'},
-                                {xtype: 'menucheckitem', group: 'connStyle', text: 'Circuit', value: 'circuit'}
+                                {xtype: 'menucheckitem', group: 'connStyle', text: 'Spline', value: 'spline', reference: 'splineCheckItem', checked: true},
+                                {xtype: 'menucheckitem', group: 'connStyle', text: 'Direct', value: 'direct', reference: 'directCheckItem'},
+                                {xtype: 'menucheckitem', group: 'connStyle', text: 'Circuit', value: 'circuit', reference: 'circuitCheckItem'}
                             ],
                             listeners: {
                                 click: 'onConnStyleMenuClick'
