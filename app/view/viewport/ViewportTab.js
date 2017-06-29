@@ -37,24 +37,48 @@ Ext.define('testFunc.view.viewport.ViewportTab', {
 		}
 	],
 
-	/*tools: [
+	tools: [
 		{
-			xtype: 'tbspacer',
-			width: '300'
-		},
-		{
-			xtype: 'button',
-			height: 30,
-			text: 'hehe'
+			//userButton's appearance will be set up upon render
+			xtype: 'splitbutton',
+			reference: 'userButton',
+			text: 'Guest',
+			padding: '2 5 2 5',
+			margin: '0 0 0 0',	//margin will be set up upon render or resize to center the tab
+			menu: {
+				xtype: 'menu',
+				plain: true,
+				items: [
+					{
+						text: 'Log In',
+						index: 0,
+						reference: 'userLogMenuItem'
+					},
+                	{
+                		text: 'Sign Up',
+                		index: 1,
+                		reference: 'userSignUpMenuItem'
+                	}
+				],
+				listeners: {
+					click: 'onUserMenuClick'
+				}
+			},
+			listeners: {
+				mouseover: 'onUserButtonMouseOver',
+				mouseout: 'onUserButtonMouseOut',
+				userContextChange: 'onUserContextChange'
+			}
 		}
-	],*/
+	],
 
 	initComponent: function(){
 		this.callParent(arguments);
 	},
 
 	listeners: {
-		afterrender: 'onAfterRender'
+		afterrender: 'onAfterRender',
+		resize: 'onResize'
 	}
 
 });

@@ -179,6 +179,20 @@ Ext.define('testFunc.view.design.DesignViewController', {
         }
     },
 
+    onGlobalConfigSave: function(button){
+        if(globalEventManager.isRegistered('canvas'))
+        {
+            globalEventManager.makeEvent("canvas", 'fromGlobalConfigPanel', {
+                type: 'setGlobalConfig',
+                defaultWeight: this.defaultWeightNumberfield.getValue()
+            });
+        }
+        else
+        {
+            console.log("canvas hasn't registered itself to globalEventManager.");
+        }
+    },
+
     onSelectedConfigSave: function(button){
         if(globalEventManager.isRegistered('canvas'))
         {
@@ -196,11 +210,16 @@ Ext.define('testFunc.view.design.DesignViewController', {
 
     //handle msg events from outside
     msgEventHandler: function(eventObj){
-        if(eventObj.type === 'canvasMsg' || eventObj.type === 'saveAgentMsg')
+        if(eventObj.type === 'canvasMsg' || eventObj.type === 'saveAgentMsg' || eventObj.type === 'loadAgentMsg')
         {
             this.msg += ("<li>" + eventObj.msg + "</li>");
             this.msgPanel.setHtml("<ul type='disc'>" + this.msg + "</ul>");
             this.msgPanel.scrollBy(0, 999999);  //always scroll to the bottom
+        }
+        else if(eventObj.type === 'clearMsg')
+        {
+            this.msg = "";
+            this.msgPanel.setHtml("");
         }
         else
         {

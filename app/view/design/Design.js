@@ -42,7 +42,7 @@ Ext.define('testFunc.view.design.Design', {
                     },
                     {
                         xtype: 'button',
-                        text: 'Create New Design',
+                        text: 'New Design',
                         reference: 'newDesignButton',
                         handler: 'onNewDesignClick'
                     },

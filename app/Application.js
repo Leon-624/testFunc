@@ -50,7 +50,11 @@ Ext.define('testFunc.Application', {
         'testFunc.util.manager.GlobalContextManager',
         'testFunc.util.context.DesignContext',
         'testFunc.util.context.UserContext',
-        'testFunc.util.context.DesignListContext'
+        'testFunc.util.context.DesignListContext',
+
+        'testFunc.view.user.UserLogin',
+        'testFunc.view.user.UserLoginViewController',
+        'testFunc.model.UserLogin'
 
         //'testFunc.view.test.Test',
         //'testFunc.view.test.TestViewModel',
@@ -196,8 +200,9 @@ Ext.define('testFunc.Application', {
     _preSetupGlobalConst: function(){
         globalConst = {
             modelUrl: {
-                designDetail: {},
-                designList: {}
+                designDetail: null,
+                designList: null,
+                userLogin: null
             }
         };
         globalConst.modelUrl.designDetail = {
@@ -207,6 +212,10 @@ Ext.define('testFunc.Application', {
         
         globalConst.modelUrl.designList = {
             read: 'http://localhost:8080/testFuncService/rest/designs/designlist/retrieve/'
+        };
+
+        globalConst.modelUrl.userLogin = {
+            create: 'http://localhost:8080/testFuncService/rest/auth/validate'
         };
     },
 

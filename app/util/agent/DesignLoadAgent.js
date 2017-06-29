@@ -47,6 +47,14 @@ Ext.define('testFunc.util.agent.DesignLoadAgent', {
             if(designId === 0)
             {
                 globalAgentManager.getDesignClearAgent().resetDesign();
+                //show msg on msgPanel
+                globalEventManager.makeEvent("msgPanel", 'msg', {
+                        type: 'clearMsg'
+                });
+                globalEventManager.makeEvent("msgPanel", 'msg', {
+                    type: 'loadAgentMsg',
+                    msg: 'Design is reset.'
+                });
                 return;
             }
             //load testFunc.model.DesignDetail
@@ -115,8 +123,17 @@ Ext.define('testFunc.util.agent.DesignLoadAgent', {
                     routerCheckItem.setChecked(true);
                     //mark clean point
                     designContext.markCleanPoint();
+                    //show msg on msgPanel
+                    globalEventManager.makeEvent("msgPanel", 'msg', {
+                        type: 'clearMsg'
+                    });
+                    globalEventManager.makeEvent("msgPanel", 'msg', {
+                        type: 'loadAgentMsg',
+                        msg: 'Design ' + record.get('designTitle') + ' is loaded.'
+                    });
                 },
                 failure: function(thisRecord, operation){
+                    Ext.Msg.alert("Loading Error", "Soomething is wrong...");
                 },
                 //will be called whether the save succeeded or failed
                 callback: function(thisRecord, operation, success){
