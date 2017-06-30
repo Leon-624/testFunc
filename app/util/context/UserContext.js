@@ -9,6 +9,7 @@ Ext.define('testFunc.util.context.UserContext', {
 	constructor: function(config){
 		this.initConfig(config);
 		this.registeredCmpts = [];
+		this.setUpContextFromToken();
 		return this;
 	},
 
@@ -24,6 +25,8 @@ Ext.define('testFunc.util.context.UserContext', {
 	setUpContextFromToken: function(){
 		var currUserId = this.getUserId();
 		//set up user context from accessToken
+		this.setUserId(null);
+		this.setUserName("Guest");
 		var token = localStorage.getItem('accessToken');
 		if(token)
 		{
@@ -42,10 +45,19 @@ Ext.define('testFunc.util.context.UserContext', {
 		}
 		//check if user context changes; if changes, notify registered components
 		if(currUserId != this.getUserId())
+		{
+			//console.log("User change: from " + currUserId + " to " + this.getUserId());
 			this.notifyContextChange();
+		}
+	},
+
+	//if token does not exists, return null
+	getToken: function(){
+		return localStorage.getItem('accessToken');
 	},
 
 	notifyContextChange: function(){
+		//notify registered components
 		for(var i = 0; i < this.registeredCmpts.length; ++i)
 		{
 			var cmpt = this.registeredCmpts[i];

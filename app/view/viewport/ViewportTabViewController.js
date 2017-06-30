@@ -11,7 +11,6 @@ Ext.define("testFunc.view.viewport.ViewportTabViewController", {
 		this.centerTabPosition(this.getView().getWidth());
 		//set up user context
 		this.userContext = globalContextManager.getUserContext();
-		this.userContext.setUpContextFromToken();
 		//register userButton to userContext, as userContext affects userButton's appearance;
 		//when user context changes, userButton will be notified by event 'userContextChange'
 		this.userContext.register(this.userButton);
@@ -66,14 +65,11 @@ Ext.define("testFunc.view.viewport.ViewportTabViewController", {
 			{
 				if(item.text === 'Log In')
 				{
-					var window = Ext.create({
-						xtype: 'userlogin',
-						topView: this.getView()
-					});
+					this.onLogInClick();
 				}
 				else if(item.text === 'Log Out')
 				{
-
+					this.onLogOutClick();
 				}
 			}
 			else if(item.index === 1)
@@ -88,5 +84,39 @@ Ext.define("testFunc.view.viewport.ViewportTabViewController", {
 				}
 			}
 		}
+	},
+
+	onLogInClick: function(){
+		var window = Ext.create({
+			xtype: 'userlogin',
+			topView: this.getView()
+		});
+	},
+
+	onLogOutClick: function(){
+		var me = this;
+        Ext.Msg.show({
+            title:'Logging Out',
+            message: 'Are you sure you would like to log out? (Unsaved changes will be lost)',
+            buttons: Ext.Msg.YESNOCANCEL,
+            icon: Ext.Msg.QUESTION,
+            fn: function(btn){
+            	//log out user
+                if(btn === 'yes')
+                {
+                	//remove token and reset userContext
+                	//design and designList will be reset because userContext will notify change
+                	localStorage.removeItem('accessToken');
+                	me.userContext.setUpContextFromToken();
+                	//show toast
+                    globalUtil.toast("Logged Out");
+                }
+                //do not log out
+                else
+                {
+                	//no action
+                }
+            }
+        });
 	}
 });

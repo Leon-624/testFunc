@@ -8,6 +8,7 @@ Ext.define("testFunc.view.user.UserLoginViewController", {
 		this.userIdTextfield = this.lookupReference('userIdTextfield');
 		this.userPwdTextfield = this.lookupReference('userPwdTextfield');
 		this.topView = this.getView().getTopView();
+		this.callback = this.getView().getCallback();
 		this.serverResponse = null;
 		this.loadMask = null;
 		//mask topview; unmask upon close
@@ -49,6 +50,14 @@ Ext.define("testFunc.view.user.UserLoginViewController", {
 			localStorage.setItem("accessToken", this.serverResponse.accessToken)
 			//update userContext (userContext will notify any associated components)
 			globalContextManager.getUserContext().setUpContextFromToken();
+			//callback if defined
+			if(this.callback)
+			{
+				//callback could be from designSaveAgent
+				this.callback();
+			}
+			//show toast
+			globalUtil.toast("Welcome " + globalContextManager.getUserContext().getUserName() + "!");
 			this.getView().close();
 		}
 		//server responses 401

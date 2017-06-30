@@ -4,25 +4,51 @@ Ext.define("testFunc.view.designlist.DesignListViewController", {
 	alias: 'controller.designlist',
 
 	onAfterRender: function(gridPanel){
+		//register designList view to userContext, as userContext affects its appearance;
+        //upon user context changes, userContext will notify registered components
+        this.userContext = globalContextManager.getUserContext();
+        this.userContext.register(this.getView());
+		//register DesignList to userContext
 		this.designlistStore = this.getViewModel().getStore('designlist');
 		//set global designListContext
 		this.setDesignListContext();
 		//examine if user logged in
-		var userContext = globalContextManager.getUserContext();
 		//already logged in
-		if(userContext.isLoggedIn())
+		if(this.userContext.isLoggedIn())
 		{
-			var userId = userContext.getUserId();
-			//set store READ api
-			this.designlistStore.getProxy().getApi().read = globalConst.modelUrl.designList.read + userId;
-			//load store to retrieve design list
-			this.designlistStore.load();
+			this.loadDesignListStore();
 		}
 		//not logged in
 		else
 		{
 			//some action
 		}
+	},
+
+	//load store based on user logged in
+	loadDesignListStore: function(){
+		var userId = this.userContext.getUserId();
+		//set store READ api
+		var proxy = this.designlistStore.getProxy();
+		proxy.getApi().read = globalConst.modelUrl.designList.read + userId;
+		//add token into header
+		proxy.setHeaders({
+			Authorization: 'Bearer ' + this.userContext.getToken()
+		});
+		//load store to retrieve design list
+		this.designlistStore.load();
+	},
+
+	clearDesignListStore: function(){
+		//reset store READ api
+		var proxy = this.designlistStore.getProxy();
+		proxy.getApi().read = globalConst.modelUrl.designList.read;
+		//reset header
+		proxy.setHeaders({
+			Authorization: 'Bearer '
+		});
+		//remove items in store
+		this.designlistStore.removeAll();
 	},
 
 	setDesignListContext: function(){
@@ -48,5 +74,18 @@ Ext.define("testFunc.view.designlist.DesignListViewController", {
 
 	onActionButtonFocus: function(button){
 		button.setStyle('backgroundColor', '#e65c00');
+	},
+
+	onUserContextChange: function(){
+		//user logs in, load designList store
+		if(this.userContext.isLoggedIn())
+		{
+			this.loadDesignListStore();
+		}
+		//user logs out
+		else
+		{
+			this.clearDesignListStore();
+		}
 	}
 });

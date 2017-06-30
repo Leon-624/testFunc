@@ -24,6 +24,7 @@ Ext.define('testFunc.view.design.Design', {
                 items: [
                     {
                         xtype: 'component',
+                        reference: 'designTitleCmpt',
                         bind: {
                             html: '{design.designTitle}<br>Ver. {design.designVersion} - ' + globalContextManager.getUserContext().getUserName()
                         }
@@ -245,7 +246,8 @@ Ext.define('testFunc.view.design.Design', {
 
     listeners: {
     	afterrender: 'onAfterRender',
-        resize: 'onResize'
+        resize: 'onResize',
+        userContextChange: 'onUserContextChange'
     }
 
 });

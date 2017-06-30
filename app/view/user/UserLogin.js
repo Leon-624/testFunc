@@ -11,7 +11,8 @@ Ext.define('testFunc.view.user.UserLogin', {
 	width: 320,
 
 	config: {
-		topView: null
+		topView: null,
+		callback: null
 	},
 
 	initComponent: function(){

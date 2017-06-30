@@ -15,6 +15,27 @@ Ext.define('testFunc.view.design.DesignViewController', {
     
     onAfterRender: function(){
         this.initCanvas();
+        this.designTitleCmpt = this.lookupReference('designTitleCmpt');
+        //register design view to userContext, as userContext affects its appearance;
+        //upon user context changes, userContext will notify registered components
+        this.userContext = globalContextManager.getUserContext();
+        this.userContext.register(this.getView());
+    },
+
+    onUserContextChange: function(){
+        //if user logs in: reset design title
+        if(this.userContext.isLoggedIn())
+        {
+            //reset designTitle
+            this.setDesignTitle();
+        }
+        //if user logs out
+        else
+        {
+            //reset design
+            this.loadAgent.loadDesign(0);
+        }
+
     },
 
     onResize: function(){
@@ -88,6 +109,11 @@ Ext.define('testFunc.view.design.DesignViewController', {
         this.clearAgent.setCanvas(this.canvas);
         this.clearAgent.setTopView(this.getView());
         this.clearAgent.setRecord(this.getViewModel().getData().design);
+    },
+
+    setDesignTitle: function(){
+        this.designTitleCmpt.setHtml(this.record.get('designTitle') + '<br>Ver. '
+            + this.record.get('designVersion') + ' - ' + this.userContext.getUserName());
     },
 
     //set design date according to model instance designTimestamp

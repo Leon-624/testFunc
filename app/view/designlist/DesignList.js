@@ -92,7 +92,8 @@ Ext.define('testFunc.view.designlist.DesignList', {
 
 	listeners:{
 		afterrender: 'onAfterRender',
-		itemdblclick: 'onItemDblClick'
+		itemdblclick: 'onItemDblClick',
+		userContextChange: 'onUserContextChange'
 	}
 
 });

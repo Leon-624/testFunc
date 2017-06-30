@@ -37,10 +37,7 @@ Ext.define('testFunc.util.agent.DesignClearAgent', {
         canvas.defaultWeight = 1;
         canvas.defaultRouter = 'spline';
         canvas.defaultLabelOn = true;
-        canvas.uninstallEditPolicy(canvas.customConnCreatePolicy);
-        canvas.customConnCreatePolicy = new draw2d.policy.connection.CustomConnectionCreatePolicy
-                    (canvas.defaultWeight, canvas.defaultRouter, canvas.defaultLabelOn, $.proxy(canvas.sendMsgToMsgPanel, canvas));
-        canvas.installEditPolicy(canvas.customConnCreatePolicy);
+        canvas.updatePolicies();
         //reset global designContext
         this.designContext.setDesignTitle(null);
         this.designContext.setDesignDescription("");
@@ -58,8 +55,12 @@ Ext.define('testFunc.util.agent.DesignClearAgent', {
             designCreateTimestamp: "N/A (Not Saved)",
             designUserId: null
         });
-        //reset date
+        //reset title and version info 
+        //although design title and version are binded through record,
+        //still call this because of potential userContext(userName) change
         var topView = this.getTopView();
+        topView.getController().setDesignTitle();
+        //reset date
         topView.getController().setDesignDate();
         //reset router
         var splineCheckItem = topView.getController().lookupReference('splineCheckItem');

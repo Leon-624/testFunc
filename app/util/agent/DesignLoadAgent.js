@@ -37,7 +37,8 @@ Ext.define('testFunc.util.agent.DesignLoadAgent', {
             designId = this.designIdToBeLoaded;
         }
         //if current design is dirty, ask if save design first
-        if(this.designContext.isDesignDirty())
+        //exception: if user not logs in, no need to ask to save design
+        if(this.designContext.isDesignDirty() && globalContextManager.getUserContext().isLoggedIn())
         {
             this.askUnsavedDesign();
         }
@@ -62,6 +63,10 @@ Ext.define('testFunc.util.agent.DesignLoadAgent', {
                 canvas = this.getCanvas(),
                 me = this;
             record.getProxy().getApi().read = globalConst.modelUrl.designDetail.read + designId;
+            //add token into header
+            record.getProxy().setHeaders({
+                Authorization: 'Bearer ' + globalContextManager.getUserContext().getToken()
+            });
             record.load({
                 success: function(thisRecord, operation){
                     //clear canvas figures
@@ -107,10 +112,7 @@ Ext.define('testFunc.util.agent.DesignLoadAgent', {
                         var nodeTs = canvas.nodeCirs[i];
                         canvas.nodeCirs[i] = figureTsMap.nodeMap[nodeTs];
                     }
-                    canvas.uninstallEditPolicy(canvas.customConnCreatePolicy);
-                    canvas.customConnCreatePolicy = new draw2d.policy.connection.CustomConnectionCreatePolicy
-                        (canvas.defaultWeight, canvas.defaultRouter, canvas.defaultLabelOn, $.proxy(canvas.sendMsgToMsgPanel, canvas));
-                    canvas.installEditPolicy(canvas.customConnCreatePolicy);
+                    canvas.updatePolicies();
                     //set global designContext
                     var designContext = globalContextManager.getDesignContext();
                     designContext.setDesignTitle(record.get('designTitle'));

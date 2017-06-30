@@ -17,15 +17,31 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
     constructor: function(config){
         this.initConfig(config);
         this.designContext = globalContextManager.getDesignContext();
+        this.userContext = globalContextManager.getUserContext();
         this.loadMask = null;
         return this;
     },
 
     /**
      * @method
+     * user must be logged in upon saving
      * @param {Function} callbackFromLoadAgent execute upon successful saving
      */
     saveDesign: function(callbackFromLoadAgent){
+        var me = this;
+        //check userContext; if not logged in, create login window
+        if(!this.userContext.isLoggedIn())
+        {
+            //make async call to create login window
+            //no need to consider callbackFromLoadAgent when callback,
+            //as user must be logged in if callbackFromLoadAgent is present
+            globalUtil.async(Ext.create, {
+                xtype: 'userlogin',
+                topView: Ext.ComponentQuery.query('viewporttab')[0],
+                callback: $.proxy(me.saveDesign, me)
+            });
+            return;
+        }
         var canvas = this.getCanvas(),
             topView = this.getTopView(),
             record = this.getRecord();
@@ -74,11 +90,14 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
                 designParent: record.get('designId'),   //also true for initial design
                 //designTimestamp: set above
                 //designCreateTimestamp: set above
-                designUserId: 'testid'
+                designUserId: globalContextManager.getUserContext().getUserId()
             });
             //set record to phantom to make it call CREATE api defined in model
-            var me = this;
             record.phantom = true;
+            //add token into header
+            record.getProxy().setHeaders({
+                Authorization: 'Bearer ' + this.userContext.getToken()
+            });
             record.save({
                 success: function(thisRecord, operation){
                     //update record designId
