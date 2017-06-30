@@ -29,17 +29,11 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
      */
     saveDesign: function(callbackFromLoadAgent){
         var me = this;
-        //check userContext; if not logged in, create login window
+        //check userContext; if not logged in, ask user to login or signup window
         if(!this.userContext.isLoggedIn())
         {
-            //make async call to create login window
-            //no need to consider callbackFromLoadAgent when callback,
-            //as user must be logged in if callbackFromLoadAgent is present
-            globalUtil.async(Ext.create, {
-                xtype: 'userlogin',
-                topView: Ext.ComponentQuery.query('viewporttab')[0],
-                callback: $.proxy(me.saveDesign, me)
-            });
+            //make sync call
+            globalUtil.async($.proxy(me.askLoginOrSignUp, me));
             return;
         }
         var canvas = this.getCanvas(),
@@ -164,6 +158,46 @@ Ext.define('testFunc.util.agent.DesignSaveAgent', {
             callback: $.proxy(function(){
                 me.saveDesign(callbackFromLoadAgent);
             }, me)
+        });
+    },
+
+    askLoginOrSignUp: function(){
+        var me = this;
+        Ext.Msg.show({
+            title:'User Identity',
+            message: 'You need to log in to save the design. Would you like to log in?',
+            buttons: Ext.Msg.YESNOCANCEL,
+            buttonText: {
+                yes: 'Log In',
+                no: 'Sign Up',
+                cancel: 'Cancel'
+            },
+            icon: Ext.Msg.QUESTION,
+            fn: function(btn){
+                //open login window
+                if(btn === 'yes')
+                {
+                    globalUtil.async(Ext.create, {
+                        xtype: 'userlogin',
+                        topView: Ext.ComponentQuery.query('viewporttab')[0],
+                        callback: $.proxy(me.saveDesign, me)
+                    });
+                }
+                //open signup window
+                else if(btn === 'no')
+                {
+                    globalUtil.async(Ext.create, {
+                        xtype: 'usersignup',
+                        topView: Ext.ComponentQuery.query('viewporttab')[0],
+                        callback: $.proxy(me.saveDesign, me)
+                    });
+                }
+                //cancel
+                else
+                {
+                    //no action
+                }
+            }
         });
     }
 

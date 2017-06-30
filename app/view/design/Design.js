@@ -135,7 +135,7 @@ Ext.define('testFunc.view.design.Design', {
                         xtype: 'panel',
                         reference: 'messagePanel',
                         anchor: '100% 40%',
-                        padding: '5, 5, 5, 5',
+                        padding: '5, 5, 0, 5',
                         scrollable: true,
                         title: 'Messages',
                         html: '<h3>&nbsp&nbsp&nbsp&nbsp&nbspWelcome!</h3>',
@@ -148,6 +148,7 @@ Ext.define('testFunc.view.design.Design', {
                         xtype: 'tabpanel',
                         reference: 'configTab',
                         anchor: '100%',
+                        padding: '5, 5, 0, 5',
                         title: 'Configuration',
                         titleAlign: 'left',
                         tabBarHeaderPosition: 1,    //make tarBar as part of the header and after the title
@@ -236,7 +237,19 @@ Ext.define('testFunc.view.design.Design', {
                                 }
                             }
                         ]
-                    }
+                    },
+                    {
+                        xtype: 'panel',
+                        reference: 'computationPanel',
+                        anchor: '100% 20%',
+                        padding: '5, 5, 0, 5',
+                        scrollable: true,
+                        title: 'Computation',
+                        html: '<br>&nbsp&nbsp&nbsp&nbsp&nbspTo be implemented.',
+                        listeners: {
+                            //afterrender: 'onMsgPanelAfterRender',
+                        }
+                    },
                 ]
             }
     	];

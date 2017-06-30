@@ -49,7 +49,7 @@ Ext.define("testFunc.view.viewport.ViewportTabViewController", {
 		if(this.userContext.isLoggedIn())
 		{
 			this.userLogMenuItem.setText('Log Out');
-			this.userSignUpMenuItem.setText('Change Info');
+			this.userSignUpMenuItem.setText('Your Details');
 		}
 		else
 		{
@@ -76,11 +76,11 @@ Ext.define("testFunc.view.viewport.ViewportTabViewController", {
 			{
 				if(item.text === 'Sign Up')
 				{
-
+					this.onSignUpClick();
 				}
-				else if(item.text === 'Change Info')
+				else if(item.text === 'Your Details')
 				{
-					
+					Ext.Msg.alert('Your Details', 'Implementing soon.');
 				}
 			}
 		}
@@ -118,5 +118,12 @@ Ext.define("testFunc.view.viewport.ViewportTabViewController", {
                 }
             }
         });
+	},
+
+	onSignUpClick: function(){
+		var window = Ext.create({
+			xtype: 'usersignup',
+			topView: this.getView()
+		});
 	}
 });

@@ -54,7 +54,14 @@ Ext.define('testFunc.Application', {
 
         'testFunc.view.user.UserLogin',
         'testFunc.view.user.UserLoginViewController',
-        'testFunc.model.UserLogin'
+        'testFunc.model.UserLogin',
+
+        'testFunc.view.user.UserSignup',
+        'testFunc.view.user.UserSignupViewController',
+        'testFunc.model.UserSignup',
+
+        'testFunc.view.help.Help',
+        'testFunc.view.help.HelpViewController'
 
         //'testFunc.view.test.Test',
         //'testFunc.view.test.TestViewModel',
@@ -192,7 +199,10 @@ Ext.define('testFunc.Application', {
         //make a function async by using setTimeout
         globalUtil.async = function(fn, args){
             setTimeout(function(){
-                fn(args);
+                if(args)
+                    fn(args);
+                else
+                    fn();
             }, 10);
         };
     },

@@ -34,6 +34,10 @@ Ext.define('testFunc.view.viewport.ViewportTab', {
 		{
 			xtype: 'design',
 			anchor: '100% 100%'
+		},
+		{
+			xtype: 'help',
+			anchor: '100% 100%'
 		}
 	],
 
