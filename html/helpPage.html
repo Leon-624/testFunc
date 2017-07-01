@@ -12,6 +12,11 @@
 	<ul type='disc'>
 		<li>
 			Drag and drop "Layout Container" or "Node" from the left palette to the design board.
+			<ul type='disc'>
+				<li>
+					"Layout Container" cannot overlap with other containers or nodes upon drop. If overlaps,<br>it will either automatically apply shift to avoid any overlap, or fails to add container in some cases.
+				</li>
+			</ul>
 		</li>
 		<li>
 			Drag and drop a "Node" into a "Layout Container" on the design board.
@@ -63,6 +68,12 @@
 		<li>
 			If not logged in, a window will be shown asking login or signup.
 		</li>
+		<li>
+			If design is new, a window will be shown asking for design title.
+		</li>
+		<li>
+			If design is based on saved design, it will be saved with the same title but with incremented version number.
+		</li>
 	</ul>
 </p>
 
@@ -107,6 +118,9 @@
 	<ul type='disc'>
 		<li>
 			Ability to delete nodes and connections.
+		</li>
+		<li>
+			Revision of the previous design versions.
 		</li>
 		<li>
 			Matrix representation of designed neural network.

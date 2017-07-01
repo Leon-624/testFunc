@@ -15,7 +15,7 @@ Ext.define('testFunc.view.viewport.ViewportTab', {
 	  In tab panel, tabBarHeaderPosition will render tabBar as an cfg-item in header,
 	  the value will be used as header.itemPosition.
 	*/
-	title: 'Design Your Own',
+	title: 'Design Your Neural Network',
 	titleAlign: 'left',
 	tabBarHeaderPosition: 1,
 

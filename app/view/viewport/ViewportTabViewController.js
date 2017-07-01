@@ -22,7 +22,7 @@ Ext.define("testFunc.view.viewport.ViewportTabViewController", {
 	},
 
 	centerTabPosition: function(width){
-		this.userButton.setMargin('0 0 0 ' + (width/2 - 150));
+		this.userButton.setMargin('0 0 0 ' + (width/2 - 180));
 	},
 
 	onUserButtonMouseOver: function(button){

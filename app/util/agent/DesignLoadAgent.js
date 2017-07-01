@@ -76,7 +76,8 @@ Ext.define('testFunc.util.agent.DesignLoadAgent', {
                     canvas.setPersistentAttributes(JSON.parse(record.get('canvasMemento')));
                     var figureTsMap = {
                         nodeMap: {},
-                        layerMap: {}
+                        layerMap: {},
+                        labelMap: {}
                     };
                     var reader = new draw2d.io.json.CustomReader();
                     reader.unmarshal(canvas, record.get('designMemento'), figureTsMap);
@@ -96,6 +97,10 @@ Ext.define('testFunc.util.agent.DesignLoadAgent', {
                                 value.childNodes[i] = figureTsMap.nodeMap[childTs];
                             }
                         }
+                        else if(value.name === 'textLabel')
+                        {
+                            //no action
+                        }
                         else
                         {
                             console.log("Load Agent: Unknown Figure Name: " + value.name);
@@ -111,6 +116,11 @@ Ext.define('testFunc.util.agent.DesignLoadAgent', {
                     {
                         var nodeTs = canvas.nodeCirs[i];
                         canvas.nodeCirs[i] = figureTsMap.nodeMap[nodeTs];
+                    }
+                    for(var i = 0; i < canvas.textLabels.length; ++i)
+                    {
+                        var labelTs = canvas.textLabels[i];
+                        canvas.textLabels[i] = figureTsMap.labelMap[labelTs];
                     }
                     canvas.updatePolicies();
                     //set global designContext

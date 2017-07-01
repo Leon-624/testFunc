@@ -95,12 +95,16 @@ Ext.define('testFunc.view.design.Design', {
     	this.items = [
     		{
     			xtype: 'component',
-                padding: '5, 5, 5, 5',
+                padding: '10 10 0 14',
+                border: '0 2 0 0',
                 style: {
-                    backgroundColor: '#b0e0e6'
+                    backgroundColor: '#b0e0e6',
+                    borderColor: '#66ccff',
+                    borderStyle: 'solid'
                 },
-    			height: 170,
-                width: 65,
+    			height: '100%',
+                width: 80,
+                scrollable: true,
     			loader:{
     				url : 'html/schematicPalettes.html',
                     autoLoad : true,
@@ -117,7 +121,7 @@ Ext.define('testFunc.view.design.Design', {
                 flex: 1,
                 height: '100%',
     			scrollable: true,
-    			html: '<div id="gfx_holder" class="ui-droppable" style="width:10000px; height:10000px; background-color:#eff5ff;"></div>'
+    			html: '<div id="gfx_holder" class="ui-droppable" style="width:5000px; height:5000px; background-color:#eff5ff;"></div>'
                     //+ '<div id="zoomSlider" style="height:150px; position:absolute; top:30px; left:30px; z-index:26000"></div>'
     		},
             {
@@ -135,7 +139,7 @@ Ext.define('testFunc.view.design.Design', {
                         xtype: 'panel',
                         reference: 'messagePanel',
                         anchor: '100% 40%',
-                        padding: '5, 5, 0, 5',
+                        padding: '5 5 0 5',
                         scrollable: true,
                         title: 'Messages',
                         html: '<h3>&nbsp&nbsp&nbsp&nbsp&nbspWelcome!</h3>',
@@ -148,7 +152,7 @@ Ext.define('testFunc.view.design.Design', {
                         xtype: 'tabpanel',
                         reference: 'configTab',
                         anchor: '100%',
-                        padding: '5, 5, 0, 5',
+                        padding: '5 5 0 5',
                         title: 'Configuration',
                         titleAlign: 'left',
                         tabBarHeaderPosition: 1,    //make tarBar as part of the header and after the title
@@ -242,7 +246,7 @@ Ext.define('testFunc.view.design.Design', {
                         xtype: 'panel',
                         reference: 'computationPanel',
                         anchor: '100% 20%',
-                        padding: '5, 5, 0, 5',
+                        padding: '5 5 0 5',
                         scrollable: true,
                         title: 'Computation',
                         html: '<br>&nbsp&nbsp&nbsp&nbsp&nbspTo be implemented.',
