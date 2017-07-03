@@ -4,7 +4,8 @@ Ext.define('testFunc.util.manager.GlobalAgentManager', {
     config: {
         designSaveAgent: null,        //initialize in constructor
         designLoadAgent: null,
-        designClearAgent: null
+        designClearAgent: null,
+        designExportAgent: null
     },
 
     constructor: function(config){
@@ -12,6 +13,7 @@ Ext.define('testFunc.util.manager.GlobalAgentManager', {
         this.setDesignSaveAgent(Ext.create('testFunc.util.agent.DesignSaveAgent'));
         this.setDesignLoadAgent(Ext.create('testFunc.util.agent.DesignLoadAgent'));
         this.setDesignClearAgent(Ext.create('testFunc.util.agent.DesignClearAgent'));
+        this.setDesignExportAgent(Ext.create('testFunc.util.agent.DesignExportAgent'));
         this.initConfig(config);
         return this;
     }

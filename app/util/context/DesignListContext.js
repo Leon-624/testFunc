@@ -64,6 +64,11 @@ Ext.define('testFunc.util.context.DesignListContext', {
 				//crudState doesn't matter here because store are not going to sync
 				previousDesign.crudState = 'U';
 			}
+			//update listInfo
+			if(globalEventManager.isRegistered('listInfoCmpt'))
+				globalEventManager.makeEvent('listInfoCmpt', 'updateListInfo', designListStore.getCount());
+			else
+				console.log('DesignListContext: listInfoCmpt not registered');
 		}
 		else
 		{

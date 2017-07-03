@@ -44,6 +44,7 @@ Ext.define('testFunc.Application', {
         'testFunc.util.agent.DesignSaveAgent',
         'testFunc.util.agent.DesignLoadAgent',
         'testFunc.util.agent.DesignClearAgent',
+        'testFunc.util.agent.DesignExportAgent',
 
         'testFunc.util.manager.GlobalEventManager',
 

@@ -10,9 +10,34 @@ Ext.define('testFunc.view.designlist.DesignList', {
 		title: '{title}'
 	},
 
+	dockedItems: [
+		{
+			xtype: 'toolbar',
+			dock: 'top'
+		}
+	],
+
 	initComponent: function(){
 		//get store from viewModel
 		this.store = this.getViewModel().getStore("designlist");
+		this.dockedItems = [
+			{
+				xtype: 'toolbar',
+				dock: 'top',
+				items: [
+					{
+						xtype: 'component',
+						reference: 'listInfoCmpt',
+						//html will be changed upon loadDesignListStore, clearDesignListStore
+						//and updateRecord in designListContext, through 'onUpdateListInfo' event
+						html: 'You need to log in to retrieve your list of designs.',
+						listeners: {
+							updateListInfo: 'onUpdateListInfo'
+						}
+					}
+				]
+			}
+		];
 		this.columns = [
 			{
 				text: 'Design Title',

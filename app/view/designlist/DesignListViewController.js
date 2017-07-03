@@ -4,6 +4,9 @@ Ext.define("testFunc.view.designlist.DesignListViewController", {
 	alias: 'controller.designlist',
 
 	onAfterRender: function(gridPanel){
+		//register listInfoCmpt to globalEventManager
+		this.listInfoCmpt = this.lookupReference('listInfoCmpt');
+        globalEventManager.register('listInfoCmpt', this.listInfoCmpt);
 		//register designList view to userContext, as userContext affects its appearance;
         //upon user context changes, userContext will notify registered components
         this.userContext = globalContextManager.getUserContext();
@@ -25,7 +28,7 @@ Ext.define("testFunc.view.designlist.DesignListViewController", {
 		}
 	},
 
-	//load store based on user logged in
+	//load store based on user logged in; reset listInfoCmpt
 	loadDesignListStore: function(){
 		var userId = this.userContext.getUserId();
 		//set store READ api
@@ -36,9 +39,26 @@ Ext.define("testFunc.view.designlist.DesignListViewController", {
 			Authorization: 'Bearer ' + this.userContext.getToken()
 		});
 		//load store to retrieve design list
-		this.designlistStore.load();
+		var me = this;
+		this.designlistStore.load({
+			//add callback to reset listInfoCmpt
+			callback: function(records, operation, success){
+				//loading success
+				if(success)
+				{
+					var recordCount = records.length;
+					globalEventManager.makeEvent('listInfoCmpt', 'updateListInfo', recordCount);
+				}
+				//loading failure
+				else
+				{
+					globalEventManager.makeEvent('listInfoCmpt', 'updateListInfo', -1);
+				}
+			}
+		});
 	},
 
+	//clear records in store; reset listInfoCmpt
 	clearDesignListStore: function(){
 		//reset store READ api
 		var proxy = this.designlistStore.getProxy();
@@ -49,6 +69,35 @@ Ext.define("testFunc.view.designlist.DesignListViewController", {
 		});
 		//remove items in store
 		this.designlistStore.removeAll();
+		//reset listInfoCmpt
+		globalEventManager.makeEvent('listInfoCmpt', 'updateListInfo', null);
+	},
+
+	onUpdateListInfo: function(recordCount){
+		//user not logged in
+		if(recordCount === null)
+		{
+			this.listInfoCmpt.setHtml('You need to log in to retrieve your list of designs.');
+		}
+		//new user without saved designs
+		else if(recordCount === 0)
+		{
+			var info = 'Hello ' + this.userContext.getUserName();
+			info += '! New here? Check out Help page for more information!';
+			this.listInfoCmpt.setHtml(info);
+		}
+		//store loading error
+		else if(recordCount === -1)
+		{
+			this.listInfoCmpt.setHtml('Loading error: something is wrong...');
+		}
+		//user with designs
+		else
+		{
+			var info = 'Hello ' + this.userContext.getUserName();
+			info += ('! You have ' + recordCount + ' saved designs.');
+			this.listInfoCmpt.setHtml(info);
+		}
 	},
 
 	setDesignListContext: function(){
@@ -77,15 +126,16 @@ Ext.define("testFunc.view.designlist.DesignListViewController", {
 	},
 
 	onUserContextChange: function(){
-		//user logs in, load designList store
+		//user logs in, load designList store; reset listInfo
 		if(this.userContext.isLoggedIn())
 		{
 			this.loadDesignListStore();
 		}
-		//user logs out
+		//user logs out, clear designList store; reset listInfo
 		else
 		{
 			this.clearDesignListStore();
+			
 		}
 	}
 });

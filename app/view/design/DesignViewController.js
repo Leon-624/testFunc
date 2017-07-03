@@ -109,6 +109,9 @@ Ext.define('testFunc.view.design.DesignViewController', {
         this.clearAgent.setCanvas(this.canvas);
         this.clearAgent.setTopView(this.getView());
         this.clearAgent.setRecord(this.getViewModel().getData().design);
+        //set exportAgent
+        this.exportAgent = globalAgentManager.getDesignExportAgent();
+        this.exportAgent.setCanvas(this.canvas);
     },
 
     setDesignTitle: function(){
@@ -196,6 +199,16 @@ Ext.define('testFunc.view.design.DesignViewController', {
 
     onNewDesignClick: function(){
         this.loadAgent.loadDesign(0);
+    },
+
+    onActionsMenuClick: function(menu, item){
+        if(item)
+        {
+            if(item.value === 'png')
+            {
+                this.exportAgent.exportPng();
+            }
+        }
     },
 
     onConnStyleMenuClick: function(menu, item){

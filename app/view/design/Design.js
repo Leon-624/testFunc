@@ -77,17 +77,31 @@ Ext.define('testFunc.view.design.Design', {
                         })
                     },
                     {
+                        xtype: 'button',
+                        text: 'Actions',
+                        reference: 'actionsButton',
+                        menu: {
+                            xtype: 'menu',
+                            plain: true,
+                            items: [
+                                {text: 'Export to PNG', value: 'png', reference: 'exportPngMenuItem'}
+                            ],
+                            listeners: {
+                                click: 'onActionsMenuClick'
+                            }
+                        }
+                    },
+                    {
                         xtype: 'splitbutton',
                         text: 'Save',
                         handler: 'onDesignSave',
-                        menu: new Ext.menu.Menu({
+                        menu: {
+                            xtype: 'menu',
                             plain: true,
                             items: [
-                                // these will render as dropdown menu items when the arrow is clicked:
-                                {text: 'Menu Item 1', handler: function(){ Ext.Msg.alert('alert', "Item 1 was clicked"); }},
-                                {text: 'Menu Item 2', handler: function(){ Ext.Msg.alert('alert', "Item 2 was clicked"); }}
+                                {text: 'Save As', handler: function(){ Ext.Msg.alert('Save As', "To be Implemented."); }}
                             ]
-                        })
+                        }
                     }
                 ]
             }
@@ -253,7 +267,7 @@ Ext.define('testFunc.view.design.Design', {
                         listeners: {
                             //afterrender: 'onMsgPanelAfterRender',
                         }
-                    },
+                    }
                 ]
             }
     	];
