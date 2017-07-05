@@ -76,7 +76,10 @@ Ext.define('testFunc.view.design.DesignViewController', {
     initCanvas: function(){
         this.canvas = new draw2d.CustomCanvas("gfx_holder");
         //set design model instance from viewModel
+        //console.log(this.getViewModel().getData().design.getProxy()); //Ghost?!!
         this.record = this.getViewModel().getData().design;
+        this.record.getProxy().getApi().create = globalConst.modelUrl.designDetail.create;
+        this.record.getProxy().getApi().read = globalConst.modelUrl.designDetail.read;
         //set design date
         this.setDesignDate();
         //set global designContext

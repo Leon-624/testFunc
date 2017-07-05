@@ -145,7 +145,7 @@ Ext.define('testFunc.util.agent.DesignLoadAgent', {
                     });
                 },
                 failure: function(thisRecord, operation){
-                    Ext.Msg.alert("Loading Error", "Soomething is wrong...");
+                    Ext.Msg.alert("Loading Error", "Something is wrong...");
                 },
                 //will be called whether the save succeeded or failed
                 callback: function(thisRecord, operation, success){

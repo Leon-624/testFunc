@@ -209,6 +209,7 @@ Ext.define('testFunc.Application', {
     },
 
     _preSetupGlobalConst: function(){
+        //to change url, change here and in model/store/ajax
         globalConst = {
             modelUrl: {
                 designDetail: null,
